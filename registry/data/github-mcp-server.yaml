@@ -1,0 +1,16 @@
+name: GitHub MCP Server
+slug: github-mcp-server
+type: mcp-server
+summary: GitHub's official MCP server for working with repositories, issues, pull requests, and Actions.
+description: A Go-based server maintained by GitHub that exposes tools for repository search, file operations, issues, pull requests, code scanning, and Actions workflows. Distributed as a Docker image, with a GitHub-hosted remote MCP endpoint also available for Copilot-enabled accounts.
+repo_url: https://github.com/github/github-mcp-server
+docs_url: https://github.com/github/github-mcp-server#installation
+install: "docker run -i --rm -e GITHUB_PERSONAL_ACCESS_TOKEN=<your-token> ghcr.io/github/github-mcp-server"
+license: MIT
+maintainer: GitHub
+tags: [github, git, issues, pull-requests, ci, official]
+added_by: nex9-agent
+added_date: "2026-08-23"
+last_verified: "2026-08-23"
+verified_by: nex9-agent
+notes: A remote hosted variant is available at https://api.githubcopilot.com/mcp/ for GitHub Copilot subscribers.

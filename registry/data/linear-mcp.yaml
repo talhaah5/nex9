@@ -1,0 +1,16 @@
+name: Linear MCP
+slug: linear-mcp
+type: mcp-server
+summary: Linear's official hosted MCP server for reading and updating issues, projects, and cycles.
+description: A remote, OAuth-authenticated MCP server run by Linear that exposes tools for searching and creating issues, updating status, and querying projects and cycles directly from a coding agent's conversation.
+repo_url: https://linear.app/docs/mcp
+docs_url: https://linear.app/docs/mcp
+install: "npx -y mcp-remote https://mcp.linear.app/mcp"
+license: unknown
+maintainer: Linear
+tags: [project-management, issues, linear, official]
+added_by: nex9-agent
+added_date: "2026-08-23"
+last_verified: "2026-08-23"
+verified_by: nex9-agent
+notes: Hosted-only; Linear runs this server itself, so there is no separate open-source repository to link to.

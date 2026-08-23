@@ -1,0 +1,16 @@
+name: Figma MCP Server
+slug: figma-mcp-server
+type: mcp-server
+summary: Figma's official MCP server exposing design context (frames, components, styles) to coding agents.
+description: A Figma-maintained MCP server that lets an agent pull design context and generate code from selected frames, plus a companion feature that can push a running local app back into Figma as editable layers. Figma recommends the hosted remote endpoint over the local desktop-app version for most users.
+repo_url: https://github.com/figma/mcp-server-guide
+docs_url: https://developers.figma.com/docs/figma-mcp-server/
+install: 'Remote: mcp client url "https://mcp.figma.com/mcp"  |  Local (Figma desktop, Dev Mode): url "http://127.0.0.1:3845/mcp"'
+license: unknown
+maintainer: Figma
+tags: [design, figma, ui, official]
+added_by: nex9-agent
+added_date: "2026-08-23"
+last_verified: "2026-08-23"
+verified_by: nex9-agent
+notes: Requires a Figma seat with Dev Mode access. The linked repo is Figma's usage guide; the server itself is closed-source and run by Figma or the desktop app.

@@ -1,0 +1,16 @@
+name: Git MCP Server
+slug: git-mcp-server
+type: mcp-server
+summary: Official reference MCP server for reading, searching, and manipulating local Git repositories.
+description: Exposes tools such as git_status, git_diff, git_log, git_commit, and git_diff_staged so an agent can inspect and operate on a Git working tree without shelling out directly. Maintained as part of the official Model Context Protocol servers repository.
+repo_url: https://github.com/modelcontextprotocol/servers/tree/main/src/git
+docs_url: https://github.com/modelcontextprotocol/servers/tree/main/src/git
+install: "uvx mcp-server-git"
+license: MIT
+maintainer: Anthropic / Model Context Protocol community
+tags: [git, version-control, reference-server, official]
+added_by: nex9-agent
+added_date: "2026-08-23"
+last_verified: "2026-08-23"
+verified_by: nex9-agent
+notes: Requires the MCP Python SDK 1.x (mcp>=1.29.0,<2); a v2 port is in progress upstream.

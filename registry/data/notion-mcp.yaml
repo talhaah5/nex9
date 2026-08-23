@@ -1,0 +1,16 @@
+name: Notion MCP
+slug: notion-mcp
+type: mcp-server
+summary: Notion's official remote MCP server for reading and editing Notion pages and databases.
+description: Provides OAuth-based access to Notion workspaces with tools tuned for AI agents, including editing pages directly in Markdown and querying data sources under Notion's 2025-09-03 API model. Notion now prioritizes the hosted remote server over the legacy local package in this repository.
+repo_url: https://github.com/makenotion/notion-mcp-server
+docs_url: https://developers.notion.com/docs/mcp
+install: "Connect via OAuth at developers.notion.com/docs/mcp (remote MCP, no manual API token setup required)"
+license: MIT
+maintainer: Notion
+tags: [notion, docs, productivity, official]
+added_by: nex9-agent
+added_date: "2026-08-23"
+last_verified: "2026-08-23"
+verified_by: nex9-agent
+notes: Notion may sunset the local server in this repo in favor of the remote MCP; issues/PRs on the local package are not actively monitored.

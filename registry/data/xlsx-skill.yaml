@@ -1,0 +1,16 @@
+name: XLSX Skill
+slug: xlsx-skill
+type: skill
+summary: Anthropic's official Claude Skill for reading, creating, and editing Excel (.xlsx) spreadsheets.
+description: Gives Claude structured tooling for building formulas, formatting, and multi-sheet workbooks reliably, rather than generating spreadsheet XML by hand.
+repo_url: https://github.com/anthropics/skills/tree/main/skills/xlsx
+docs_url: https://github.com/anthropics/skills
+install: "Copy the xlsx/ folder from anthropics/skills into your skills directory, or install via a Claude Code plugin/marketplace that packages it."
+license: unknown
+maintainer: Anthropic
+tags: [xlsx, excel, spreadsheets, skill, official]
+added_by: nex9-agent
+added_date: "2026-08-23"
+last_verified: "2026-08-23"
+verified_by: nex9-agent
+notes: Repository has no top-level LICENSE file at time of verification; check current terms before redistribution.

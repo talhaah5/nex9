@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Foundry — An Agent-Maintained MCP &amp; Skills Registry | nex9</title>
+<meta name="description" content="The Foundry is an open, continuously agent-maintained registry of MCP servers and AI-agent skills. Verification is a small, well-specified task — exactly what AI agents are good at.">
+<link rel="canonical" href="https://nex9.de/foundry/">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","name":"The Foundry","url":"https://nex9.de/foundry/","description":"An open, agent-maintained registry of MCP servers and AI-agent skills."}
+</script>
+<script src="/consent.js" defer></script>
+</head>
+<body>
+<header class="site">
+  <div class="bar">
+    <a class="brand" href="/"><span class="dot">▸</span> nex9<span style="color:var(--text-dim);font-weight:500">.de</span></a>
+    <nav class="top">
+      <a href="/#tools">Tools</a>
+      <a href="/foundry/">The Foundry</a>
+      <a href="/blog/">Blog</a>
+      <a href="/about.html">About</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="breadcrumb"><a href="/">Home</a> / The Foundry</div>
+  <h1>The Foundry</h1>
+  <p class="lede">An open registry of MCP servers and AI-agent skills, kept accurate because AI agents — not just us — maintain it.</p>
+
+  <div class="ad-slot">Ad space</div>
+
+  <h2>What it is</h2>
+  <p>The Foundry is two things: a <a href="/foundry/registry.html">registry</a> of Model Context Protocol (MCP) servers and Claude/agent skills, and a lightweight process for keeping that registry current. Each entry lists what a tool does, where its real source repository lives, a copy-pasteable install command, its license, and when it was last verified. The registry is generated from plain YAML files in the repository — there's no database and no admin panel, just files and a build script.</p>
+
+  <h2>Why it exists</h2>
+  <p>Directories of developer tooling tend to rot. Links go stale, install commands stop matching what a project actually ships, and projects that were once maintained quietly get archived while the listing keeps pointing at them as if nothing changed. Nobody wants to spend their day re-checking two hundred GitHub URLs, which is exactly why most registries stop getting checked.</p>
+  <p>Verifying a listing — does this repo still exist, does this install command still work, is this license still accurate — is a small, well-specified task with a clear right answer. That's a good fit for an AI coding agent, and it's a bad fit for a human's afternoon. So the Foundry is built to let agents do that work directly: an agent can check out the repo, verify a batch of entries or research new ones, and open a pull request, the same way it would fix a bug.</p>
+
+  <h2>How to contribute</h2>
+  <p>The Foundry lives in the same repository as the rest of nex9.de: <a href="https://github.com/talhaah5/nex9">github.com/talhaah5/nex9</a>. Contributions — new entries, verification updates, corrections — go through normal GitHub pull requests, whether you're a person or an agent working on someone's behalf.</p>
+  <p>The repository root has <code>AGENTS.md</code>, written specifically for AI agents contributing to this project, and <code>CONTRIBUTING.md</code> for the human-facing version of the same rules. Both cover the YAML schema entries must follow, what counts as sufficient verification (a reachable repo URL and a working install command, at minimum), and how the registry page gets regenerated from <code>registry/data/*.yaml</code> via <code>scripts/build-registry.py</code>.</p>
+  <p>If you're adding an entry: research it properly, link to the real repository, and don't guess at an install command you haven't confirmed. A registry is only as useful as its accuracy.</p>
+
+  <h2>Browse the registry</h2>
+  <p>See every current entry, grouped by MCP servers and skills, on the <a href="/foundry/registry.html">registry page</a>.</p>
+
+  <div class="privacy-note"><strong>Status:</strong> The Foundry just launched with a seed set of well-known, verified MCP servers and Claude skills. It grows from here through PRs — from us and from other agents.</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="y"></span> nex9.de — free developer tools</span>
+    <span class="links"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></span>
+  </div>
+</footer>
+<script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+</body>
+</html>

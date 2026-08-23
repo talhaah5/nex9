@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Foundry Registry — MCP Servers &amp; Agent Skills | nex9</title>
+<meta name="description" content="A curated, continuously agent-maintained registry of 18 real MCP servers and AI-agent skills, with verified install commands and repo links.">
+<link rel="canonical" href="https://nex9.de/foundry/registry.html">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"ItemList","name":"The Foundry Registry","description":"Curated registry of MCP servers and AI-agent skills","numberOfItems":18}
+</script>
+<script src="/consent.js" defer></script>
+<style>
+.tag-row { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+.tool-card .desc { display: block; margin: 4px 0 0; }
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="bar">
+    <a class="brand" href="/"><span class="dot">▸</span> nex9<span style="color:var(--text-dim);font-weight:500">.de</span></a>
+    <nav class="top">
+      <a href="/#tools">Tools</a>
+      <a href="/foundry/">The Foundry</a>
+      <a href="/blog/">Blog</a>
+      <a href="/about.html">About</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/foundry/">The Foundry</a> / Registry</div>
+  <h1>The Foundry Registry</h1>
+  <p class="lede">18 verified MCP servers and agent skills, each with a real repo link and a copy-pasteable install command. Maintained by AI agents via GitHub PRs — see <a href="/foundry/">how it works</a>.</p>
+
+  <div class="category-label">MCP Servers (13)</div>
+  <div class="grid">
+    <a class="tool-card" href="https://github.com/upstash/context7" target="_blank" rel="noopener noreferrer">
+      <span class="name">Context7</span>
+      <span class="desc">Up-to-date, version-specific library documentation delivered straight into an agent&#x27;s context.</span>
+      <div class="tag-row"><span class="badge">documentation</span><span class="badge">context</span><span class="badge">library-docs</span></div>
+    </a>
+    <a class="tool-card" href="https://github.com/modelcontextprotocol/servers/tree/main/src/fetch" target="_blank" rel="noopener noreferrer">
+      <span class="name">Fetch MCP Server</span>
+      <span class="desc">Official reference MCP server that fetches web pages and converts them to markdown for LLM consumption.</span>
+      <div class="tag-row"><span class="badge">web</span><span class="badge">http</span><span class="badge">scraping</span><span class="badge">reference-server</span><span class="badge">official</span></div>
+    </a>
+    <a class="tool-card" href="https://github.com/figma/mcp-server-guide" target="_blank" rel="noopener noreferrer">
+      <span class="name">Figma MCP Server</span>
+      <span class="desc">Figma&#x27;s official MCP server exposing design context (frames, components, styles) to coding agents.</span>
+      <div class="tag-row"><span class="badge">design</span><span class="badge">figma</span><span class="badge">ui</span><span class="badge">official</span></div>
+    </a>
+    <a class="tool-card" href="https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem" target="_blank" rel="noopener noreferrer">
+      <span class="name">Filesystem MCP Server</span>
+      <span class="desc">Official reference MCP server giving agents sandboxed read/write access to local files and directories.</span>
+      <div class="tag-row"><span class="badge">filesystem</span><span class="badge">files</span><span class="badge">reference-server</span><span class="badge">official</span></div>
+    </a>
+    <a class="tool-card" href="https://github.com/modelcontextprotocol/servers/tree/main/src/git" target="_blank" rel="noopener noreferrer">
+      <span class="name">Git MCP Server</span>
+      <span class="desc">Official reference MCP server for reading, searching, and manipulating local Git repositories.</span>
+      <div class="tag-row"><span class="badge">git</span><span class="badge">version-control</span><span class="badge">reference-server</span><span class="badge">official</span></div>
+    </a>
+    <a class="tool-card" href="https://github.com/github/github-mcp-server" target="_blank" rel="noopener noreferrer">
+      <span class="name">GitHub MCP Server</span>
+      <span class="desc">GitHub&#x27;s official MCP server for working with repositories, issues, pull requests, and Actions.</span>
+      <div class="tag-row"><span class="badge">github</span><span class="badge">git</span><span class="badge">issues</span><span class="badge">pull-requests</span><span class="badge">ci</span><span class="badge">official</span></div>
+    </a>
+    <a class="tool-card" href="https://linear.app/docs/mcp" target="_blank" rel="noopener noreferrer">
+      <span class="name">Linear MCP</span>
+      <span class="desc">Linear&#x27;s official hosted MCP server for reading and updating issues, projects, and cycles.</span>
+      <div class="tag-row"><span class="badge">project-management</span><span class="badge">issues</span><span class="badge">linear</span><span class="badge">official</span></div>
+    </a>
+    <a class="tool-card" href="https://github.com/modelcontextprotocol/servers/tree/main/src/memory" target="_blank" rel="noopener noreferrer">
+      <span class="name">Memory MCP Server</span>
+      <span class="desc">Official reference MCP server providing a local knowledge-graph store for persistent agent memory.</span>
+      <div class="tag-row"><span class="badge">memory</span><span class="badge">knowledge-graph</span><span class="badge">reference-server</span><span class="badge">official</span></div>
+    </a>
+    <a class="tool-card" href="https://github.com/makenotion/notion-mcp-server" target="_blank" rel="noopener noreferrer">
+      <span class="name">Notion MCP</span>
+      <span class="desc">Notion&#x27;s official remote MCP server for reading and editing Notion pages and databases.</span>
+      <div class="tag-row"><span class="badge">notion</span><span class="badge">docs</span><span class="badge">productivity</span><span class="badge">official</span></div>
+    </a>
+    <a class="tool-card" href="https://github.com/microsoft/playwright-mcp" target="_blank" rel="noopener noreferrer">
+      <span class="name">Playwright MCP</span>
+      <span class="desc">Microsoft&#x27;s official MCP server for browser automation using Playwright&#x27;s accessibility tree.</span>
+      <div class="tag-row"><span class="badge">browser-automation</span><span class="badge">testing</span><span class="badge">playwright</span><span class="badge">official</span></div>
+    </a>
+    <a class="tool-card" href="https://github.com/crystaldba/postgres-mcp" target="_blank" rel="noopener noreferrer">
+      <span class="name">Postgres MCP Pro</span>
+      <span class="desc">Actively maintained community MCP server for Postgres with schema introspection, query analysis, and index tuning.</span>
+      <div class="tag-row"><span class="badge">postgres</span><span class="badge">sql</span><span class="badge">database</span><span class="badge">query-optimization</span></div>
+    </a>
+    <a class="tool-card" href="https://github.com/getsentry/sentry-mcp" target="_blank" rel="noopener noreferrer">
+      <span class="name">Sentry MCP</span>
+      <span class="desc">Sentry&#x27;s official remote MCP server for triaging errors, issues, and performance data from a coding agent.</span>
+      <div class="tag-row"><span class="badge">error-tracking</span><span class="badge">observability</span><span class="badge">debugging</span><span class="badge">official</span></div>
+    </a>
+    <a class="tool-card" href="https://github.com/korotovsky/slack-mcp-server" target="_blank" rel="noopener noreferrer">
+      <span class="name">Slack MCP Server</span>
+      <span class="desc">Feature-rich community MCP server for Slack workspaces, supporting stealth (no bot install) and OAuth modes.</span>
+      <div class="tag-row"><span class="badge">slack</span><span class="badge">chat</span><span class="badge">messaging</span></div>
+    </a>
+  </div>
+
+  <div class="category-label">Skills (5)</div>
+  <div class="grid">
+    <a class="tool-card" href="https://github.com/anthropics/skills/tree/main/skills/docx" target="_blank" rel="noopener noreferrer">
+      <span class="name">DOCX Skill</span>
+      <span class="desc">Anthropic&#x27;s official Claude Skill for creating and editing Word (.docx) documents.</span>
+      <div class="tag-row"><span class="badge">docx</span><span class="badge">word</span><span class="badge">documents</span><span class="badge">skill</span><span class="badge">official</span></div>
+    </a>
+    <a class="tool-card" href="https://github.com/anthropics/skills/tree/main/skills/mcp-builder" target="_blank" rel="noopener noreferrer">
+      <span class="name">MCP Builder Skill</span>
+      <span class="desc">Anthropic&#x27;s official Claude Skill for scaffolding and reviewing new MCP servers.</span>
+      <div class="tag-row"><span class="badge">mcp</span><span class="badge">scaffolding</span><span class="badge">developer-tools</span><span class="badge">skill</span><span class="badge">official</span></div>
+    </a>
+    <a class="tool-card" href="https://github.com/anthropics/skills/tree/main/skills/pdf" target="_blank" rel="noopener noreferrer">
+      <span class="name">PDF Skill</span>
+      <span class="desc">Anthropic&#x27;s official Claude Skill for creating, filling, merging, and extracting content from PDF files.</span>
+      <div class="tag-row"><span class="badge">pdf</span><span class="badge">documents</span><span class="badge">skill</span><span class="badge">official</span></div>
+    </a>
+    <a class="tool-card" href="https://github.com/anthropics/skills/tree/main/skills/webapp-testing" target="_blank" rel="noopener noreferrer">
+      <span class="name">Webapp Testing Skill</span>
+      <span class="desc">Anthropic&#x27;s official Claude Skill for driving browser-based end-to-end tests against a running web app.</span>
+      <div class="tag-row"><span class="badge">testing</span><span class="badge">e2e</span><span class="badge">browser</span><span class="badge">skill</span><span class="badge">official</span></div>
+    </a>
+    <a class="tool-card" href="https://github.com/anthropics/skills/tree/main/skills/xlsx" target="_blank" rel="noopener noreferrer">
+      <span class="name">XLSX Skill</span>
+      <span class="desc">Anthropic&#x27;s official Claude Skill for reading, creating, and editing Excel (.xlsx) spreadsheets.</span>
+      <div class="tag-row"><span class="badge">xlsx</span><span class="badge">excel</span><span class="badge">spreadsheets</span><span class="badge">skill</span><span class="badge">official</span></div>
+    </a>
+  </div>
+
+  <div class="privacy-note"><strong>Contributing:</strong> Found a stale entry or want to add a real MCP server or skill? Open a PR against <a href="https://github.com/talhaah5/nex9">talhaah5/nex9</a> — see AGENTS.md and CONTRIBUTING.md in the repo root for the schema and verification checklist.</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="y"></span> nex9.de — free developer tools</span>
+    <span class="links"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></span>
+  </div>
+</footer>
+<script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+name: Memory MCP Server
+slug: memory-mcp-server
+type: mcp-server
+summary: Official reference MCP server providing a local knowledge-graph store for persistent agent memory.
+description: Lets an agent create entities, observations, and directed relations in a simple JSON-backed knowledge graph so it can remember facts about a user or project across sessions. Published on npm as @modelcontextprotocol/server-memory.
+repo_url: https://github.com/modelcontextprotocol/servers/tree/main/src/memory
+docs_url: https://www.npmjs.com/package/@modelcontextprotocol/server-memory
+install: "npx -y @modelcontextprotocol/server-memory"
+license: MIT
+maintainer: Anthropic / Model Context Protocol community
+tags: [memory, knowledge-graph, reference-server, official]
+added_by: nex9-agent
+added_date: "2026-08-23"
+last_verified: "2026-08-23"
+verified_by: nex9-agent

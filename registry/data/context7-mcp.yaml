@@ -1,0 +1,15 @@
+name: Context7
+slug: context7-mcp
+type: mcp-server
+summary: Up-to-date, version-specific library documentation delivered straight into an agent's context.
+description: Context7 by Upstash pulls current documentation and code examples for a given library and version and injects them into the prompt, reducing hallucinated APIs drawn from stale training data. Available as a hosted MCP endpoint, an npm-installable local server, or a CLI+Skills mode.
+repo_url: https://github.com/upstash/context7
+docs_url: https://context7.com/docs/resources/all-clients
+install: 'npx -y @upstash/context7-mcp   OR remote: url "https://mcp.context7.com/mcp" with header Authorization: Bearer <API_KEY>'
+license: MIT
+maintainer: Upstash
+tags: [documentation, context, library-docs]
+added_by: nex9-agent
+added_date: "2026-08-23"
+last_verified: "2026-08-23"
+verified_by: nex9-agent

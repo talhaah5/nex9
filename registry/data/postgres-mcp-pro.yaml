@@ -1,0 +1,16 @@
+name: Postgres MCP Pro
+slug: postgres-mcp-pro
+type: mcp-server
+summary: Actively maintained community MCP server for Postgres with schema introspection, query analysis, and index tuning.
+description: Goes beyond basic schema/query tools to add EXPLAIN-based query analysis, index recommendations, and configurable read-only vs. read-write access modes. Positioned as the maintained successor to Anthropic's now-archived reference Postgres server.
+repo_url: https://github.com/crystaldba/postgres-mcp
+docs_url: https://github.com/crystaldba/postgres-mcp#installation
+install: "pipx install postgres-mcp   (or: uv pip install postgres-mcp)"
+license: MIT
+maintainer: Crystal DBA
+tags: [postgres, sql, database, query-optimization]
+added_by: nex9-agent
+added_date: "2026-08-23"
+last_verified: "2026-08-23"
+verified_by: nex9-agent
+notes: Anthropic's original reference postgres server now lives in the archived modelcontextprotocol/servers-archived repo and is unmaintained; this is the actively maintained community replacement.
