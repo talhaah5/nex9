@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HTML Entity Encoder/Decoder — Free Online Tool | nex9</title>
+<meta name="description" content="Encode text to HTML entities or decode HTML entities back to plain text online for free, using safe browser-native encoding methods. Runs entirely in your browser.">
+<link rel="canonical" href="https://nex9.de/tools/html-entity-converter.html">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"HTML Entity Encoder/Decoder","url":"https://nex9.de/tools/html-entity-converter.html","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script src="/consent.js" defer></script>
+</head>
+<body>
+<header class="site">
+  <div class="bar">
+    <a class="brand" href="/"><span class="dot">▸</span> nex9<span style="color:var(--text-dim);font-weight:500">.de</span></a>
+    <nav class="top">
+      <a href="/#tools">Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/about.html">About</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/#tools">Tools</a> / HTML Entity Encoder/Decoder</div>
+  <h1>HTML Entity Encoder/Decoder</h1>
+  <p class="lede">Convert plain text to HTML-safe entities, or decode HTML entities back to readable text. Uses safe, browser-native encoding/decoding — everything runs locally in your browser.</p>
+
+  <div class="card">
+    <label for="input">Input</label>
+    <textarea id="input" rows="8" placeholder="Type or paste text with special characters like &lt;tag&gt; &amp; &quot;quotes&quot;"></textarea>
+
+    <div class="row">
+      <button id="encodeBtn">Encode</button>
+      <button id="decodeBtn" class="secondary">Decode</button>
+      <button id="copyBtn" class="secondary">Copy Output</button>
+      <button id="clearBtn" class="secondary">Clear</button>
+      <span id="status"></span>
+    </div>
+
+    <label for="output">Output</label>
+    <div class="output-box" id="output">Output will appear here…</div>
+  </div>
+
+  <div class="ad-slot">Ad space</div>
+
+  <h2>How to use this HTML entity converter</h2>
+  <p>Paste text into the input box. Click <strong>Encode</strong> to convert special characters like <code>&amp;</code>, <code>&lt;</code>, <code>&gt;</code>, <code>"</code> and <code>'</code> into their HTML entity equivalents (for example <code>&lt;</code> becomes <code>&amp;lt;</code>), or click <strong>Decode</strong> to convert HTML entities back into their literal characters. Both directions use safe, browser-native DOM APIs rather than hand-written replace chains, so the output is always accurate and correctly escaped.</p>
+
+  <h2>Why HTML entities matter</h2>
+  <p>Browsers interpret certain characters as markup — <code>&lt;</code> and <code>&gt;</code> start and end tags, <code>&amp;</code> starts an entity reference. If you want to display a literal <code>&lt;script&gt;</code> tag as visible text on a web page (instead of having the browser execute it), you must encode it as <code>&amp;lt;script&amp;gt;</code>. This is essential any time user-supplied or code-sample text is rendered inside HTML: forums, documentation sites, comment sections, and code blocks all rely on entity encoding to safely display raw markup without triggering it — and it's also a key defense against cross-site scripting (XSS), since encoded text can never be parsed as an executable tag or attribute.</p>
+
+  <div class="privacy-note"><strong>Privacy:</strong> This tool processes everything client-side in your browser using JavaScript. Your text is never sent to any server. Decoding uses a detached &lt;textarea&gt; element, whose content is never executed as HTML or script, so it's safe even with hostile input.</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="y"></span> nex9.de — free developer tools</span>
+    <span class="links"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></span>
+  </div>
+</footer>
+<script>
+document.getElementById('y').textContent = new Date().getFullYear();
+const $ = id => document.getElementById(id);
+const input = $('input'), output = $('output'), status = $('status');
+
+function encodeEntities(text) {
+  const div = document.createElement('div');
+  div.appendChild(document.createTextNode(text));
+  return div.innerHTML;
+}
+
+function decodeEntities(text) {
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = text;
+  return textarea.value;
+}
+
+$('encodeBtn').addEventListener('click', () => {
+  output.textContent = encodeEntities(input.value);
+  status.innerHTML = '<span class="badge ok">Encoded</span>';
+});
+
+$('decodeBtn').addEventListener('click', () => {
+  output.textContent = decodeEntities(input.value);
+  status.innerHTML = '<span class="badge ok">Decoded</span>';
+});
+
+$('copyBtn').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(output.textContent);
+    status.innerHTML = '<span class="badge ok">Copied</span>';
+  } catch (e) { status.textContent = 'Copy failed'; }
+});
+
+$('clearBtn').addEventListener('click', () => {
+  input.value = '';
+  output.textContent = 'Output will appear here…';
+  status.textContent = '';
+});
+</script>
+</body>
+</html>

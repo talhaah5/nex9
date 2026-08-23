@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Base64 Encode / Decode — Free Online Tool | nex9</title>
+<meta name="description" content="Encode text to Base64 or decode Base64 back to text, with full UTF-8 support for emoji and accents. Fast, private, and runs entirely in your browser.">
+<link rel="canonical" href="https://nex9.de/tools/base64-encode-decode.html">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Base64 Encode / Decode","url":"https://nex9.de/tools/base64-encode-decode.html","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script src="/consent.js" defer></script>
+</head>
+<body>
+<header class="site">
+  <div class="bar">
+    <a class="brand" href="/"><span class="dot">▸</span> nex9<span style="color:var(--text-dim);font-weight:500">.de</span></a>
+    <nav class="top">
+      <a href="/#tools">Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/about.html">About</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/#tools">Tools</a> / Base64 Encode / Decode</div>
+  <h1>Base64 Encode / Decode</h1>
+  <p class="lede">Convert text to Base64 or decode Base64 back to readable text. Fully UTF-8 safe, so emoji and non-Latin scripts round-trip correctly. Everything runs locally in your browser.</p>
+
+  <div class="card">
+    <label for="input">Input</label>
+    <textarea id="input" rows="8" placeholder="Type or paste text to encode, or a Base64 string to decode…"></textarea>
+
+    <div class="row">
+      <button id="encodeBtn">Encode</button>
+      <button id="decodeBtn">Decode</button>
+      <button id="copyBtn" class="secondary">Copy Output</button>
+      <button id="clearBtn" class="secondary">Clear</button>
+      <span id="status"></span>
+    </div>
+
+    <label for="output">Output</label>
+    <div class="output-box" id="output">Output will appear here…</div>
+  </div>
+
+  <div class="ad-slot">Ad space</div>
+
+  <h2>How to use this Base64 tool</h2>
+  <p>Paste any text into the input box and click <strong>Encode</strong> to convert it to Base64, or paste a Base64 string and click <strong>Decode</strong> to recover the original text. If the input isn't valid Base64, the tool tells you clearly instead of failing silently. Use <strong>Copy Output</strong> to grab the result for pasting elsewhere.</p>
+
+  <h2>What is Base64 used for?</h2>
+  <p>Base64 encodes arbitrary binary or text data as a string of printable ASCII characters, which makes it safe to embed in places that don't handle raw bytes well — JSON payloads, URLs, email attachments (MIME), data URIs for images, and HTTP authentication headers. It isn't encryption and provides no security on its own; it's purely a format conversion so binary-unfriendly systems can carry arbitrary data intact.</p>
+
+  <div class="privacy-note"><strong>Privacy:</strong> This tool processes everything client-side in your browser using JavaScript. Your text is never sent to any server.</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="y"></span> nex9.de — free developer tools</span>
+    <span class="links"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></span>
+  </div>
+</footer>
+<script>
+document.getElementById('y').textContent = new Date().getFullYear();
+const $ = id => document.getElementById(id);
+const input = $('input'), output = $('output'), status = $('status');
+
+function bytesToBase64(bytes) {
+  let binary = '';
+  const chunkSize = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+  }
+  return btoa(binary);
+}
+
+function base64ToBytes(b64) {
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+
+function showOk(label) {
+  status.innerHTML = '<span class="badge ok">' + label + '</span>';
+}
+
+function showError(message) {
+  status.innerHTML = '<span class="badge err">' + message + '</span>';
+}
+
+$('encodeBtn').addEventListener('click', () => {
+  try {
+    const bytes = new TextEncoder().encode(input.value);
+    output.textContent = bytesToBase64(bytes);
+    showOk('Encoded');
+  } catch (e) {
+    showError('Encoding failed');
+  }
+});
+
+$('decodeBtn').addEventListener('click', () => {
+  try {
+    const bytes = base64ToBytes(input.value.trim());
+    output.textContent = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+    showOk('Decoded');
+  } catch (e) {
+    output.textContent = '';
+    showError('Invalid Base64 input');
+  }
+});
+
+$('copyBtn').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(output.textContent);
+    showOk('Copied');
+  } catch (e) {
+    status.textContent = 'Copy failed';
+  }
+});
+
+$('clearBtn').addEventListener('click', () => {
+  input.value = '';
+  output.textContent = 'Output will appear here…';
+  status.textContent = '';
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Random Number Generator — Free Online Tool | nex9</title>
+<meta name="description" content="Generate cryptographically secure random integers online for free, using unbiased rejection sampling on crypto.getRandomValues. Set a min/max range, count, and optional uniqueness. Runs entirely in your browser.">
+<link rel="canonical" href="https://nex9.de/tools/random-number-generator.html">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Random Number Generator","url":"https://nex9.de/tools/random-number-generator.html","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script src="/consent.js" defer></script>
+</head>
+<body>
+<header class="site">
+  <div class="bar">
+    <a class="brand" href="/"><span class="dot">▸</span> nex9<span style="color:var(--text-dim);font-weight:500">.de</span></a>
+    <nav class="top">
+      <a href="/#tools">Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/about.html">About</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/#tools">Tools</a> / Random Number Generator</div>
+  <h1>Random Number Generator</h1>
+  <p class="lede">Generate cryptographically secure random integers using your browser's Web Crypto API with unbiased rejection sampling — no weak <code>Math.random()</code> shortcuts. Everything runs locally; nothing is uploaded or stored.</p>
+
+  <div class="card">
+    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr));margin:0 0 4px">
+      <div>
+        <label for="min">Min</label>
+        <input type="number" id="min" value="1">
+      </div>
+      <div>
+        <label for="max">Max</label>
+        <input type="number" id="max" value="100">
+      </div>
+      <div>
+        <label for="count">How many</label>
+        <input type="number" id="count" value="5" min="1">
+      </div>
+    </div>
+
+    <div class="row">
+      <label style="margin:0;display:flex;align-items:center;gap:6px;font-weight:500">
+        <input type="checkbox" id="unique" style="width:auto">
+        Unique values only
+      </label>
+    </div>
+
+    <div class="row">
+      <button id="genBtn">Generate</button>
+      <button id="copyBtn" class="secondary">Copy Output</button>
+      <span id="status"></span>
+    </div>
+
+    <label for="output">Output</label>
+    <div class="output-box" id="output">Output will appear here…</div>
+  </div>
+
+  <div class="ad-slot">Ad space</div>
+
+  <h2>How to use this random number generator</h2>
+  <p>Set a minimum and maximum value (inclusive), choose how many numbers you want, and optionally check <strong>Unique values only</strong> if you need a list without duplicates — useful for lottery-style draws, sampling, or shuffled ID assignment. Click <strong>Generate</strong> to produce the list, then copy it with one click. If you request more unique values than the range can supply, the tool shows an error instead of hanging or producing incorrect output.</p>
+
+  <h2>Why cryptographic randomness matters</h2>
+  <p><code>Math.random()</code> is a pseudo-random generator not designed for security-sensitive use — its output can, in principle, be predicted, and it can also introduce subtle statistical bias when combined with the modulo operator to fit a range. This tool instead uses <code>crypto.getRandomValues()</code>, the Web Crypto API's cryptographically secure random source, combined with rejection sampling: it discards any raw random value that would introduce range bias, guaranteeing a truly uniform distribution across your min/max range. This makes it suitable for generating lottery numbers, sampling tokens, randomized test data, or anything else where fairness and unpredictability matter.</p>
+
+  <div class="privacy-note"><strong>Privacy:</strong> This tool processes everything client-side in your browser using JavaScript. Nothing you enter is ever sent to any server.</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="y"></span> nex9.de — free developer tools</span>
+    <span class="links"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></span>
+  </div>
+</footer>
+<script>
+document.getElementById('y').textContent = new Date().getFullYear();
+const $ = id => document.getElementById(id);
+const output = $('output'), status = $('status');
+
+function randomInt(min, max) {
+  const range = max - min + 1;
+  const bytesNeeded = Math.ceil(Math.log2(range) / 8) || 1;
+  const maxValid = Math.floor(256 ** bytesNeeded / range) * range - 1;
+  let value;
+  do {
+    const buf = new Uint8Array(bytesNeeded);
+    crypto.getRandomValues(buf);
+    value = buf.reduce((acc, b, i) => acc + b * 256 ** i, 0);
+  } while (value > maxValid);
+  return min + (value % range);
+}
+
+function showError(msg) {
+  output.textContent = msg;
+  status.innerHTML = '<span class="badge err">Error</span>';
+}
+
+$('genBtn').addEventListener('click', () => {
+  const min = Math.trunc(Number($('min').value));
+  const max = Math.trunc(Number($('max').value));
+  const count = Math.trunc(Number($('count').value));
+  const unique = $('unique').checked;
+
+  if (!Number.isFinite(min) || !Number.isFinite(max) || !Number.isFinite(count)) {
+    showError('Please enter valid numbers.');
+    return;
+  }
+  if (min > max) {
+    showError('Min must be less than or equal to Max.');
+    return;
+  }
+  if (count < 1) {
+    showError('Count must be at least 1.');
+    return;
+  }
+
+  const rangeSize = max - min + 1;
+  if (unique && count > rangeSize) {
+    showError('Cannot generate ' + count + ' unique values — the range [' + min + ', ' + max + '] only has ' + rangeSize + ' possible values.');
+    return;
+  }
+
+  const results = [];
+  if (unique) {
+    const seen = new Set();
+    while (seen.size < count) {
+      seen.add(randomInt(min, max));
+    }
+    results.push(...seen);
+  } else {
+    for (let i = 0; i < count; i++) {
+      results.push(randomInt(min, max));
+    }
+  }
+
+  output.textContent = results.join(', ');
+  status.innerHTML = '<span class="badge ok">Generated</span>';
+});
+
+$('copyBtn').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(output.textContent);
+    status.innerHTML = '<span class="badge ok">Copied</span>';
+  } catch (e) { status.textContent = 'Copy failed'; }
+});
+</script>
+</body>
+</html>

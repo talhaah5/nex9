@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IPv4 Subnet Calculator — Free Online Tool | nex9</title>
+<meta name="description" content="Calculate network address, broadcast address, netmask, wildcard mask, usable host range and host counts from an IPv4 address and CIDR prefix. Runs entirely in your browser.">
+<link rel="canonical" href="https://nex9.de/tools/ipv4-subnet-calculator.html">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"IPv4 Subnet Calculator","url":"https://nex9.de/tools/ipv4-subnet-calculator.html","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script src="/consent.js" defer></script>
+</head>
+<body>
+<header class="site">
+  <div class="bar">
+    <a class="brand" href="/"><span class="dot">▸</span> nex9<span style="color:var(--text-dim);font-weight:500">.de</span></a>
+    <nav class="top">
+      <a href="/#tools">Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/about.html">About</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/#tools">Tools</a> / IPv4 Subnet Calculator</div>
+  <h1>IPv4 Subnet Calculator</h1>
+  <p class="lede">Enter an IPv4 address and CIDR prefix to instantly get the network address, broadcast address, netmask, wildcard mask, usable host range and host counts. Everything runs locally in your browser.</p>
+
+  <div class="card">
+    <label for="input">IP address / CIDR</label>
+    <input type="text" id="input" placeholder="192.168.1.10/24" value="192.168.1.10/24">
+
+    <div class="row">
+      <button id="calcBtn">Calculate</button>
+      <span id="status"></span>
+    </div>
+
+    <div id="results" style="display:none">
+      <table>
+        <tbody>
+          <tr><th>Network address</th><td id="r-network"></td></tr>
+          <tr><th>Broadcast address</th><td id="r-broadcast"></td></tr>
+          <tr><th>Netmask</th><td id="r-netmask"></td></tr>
+          <tr><th>Wildcard mask</th><td id="r-wildcard"></td></tr>
+          <tr><th>First usable host</th><td id="r-first"></td></tr>
+          <tr><th>Last usable host</th><td id="r-last"></td></tr>
+          <tr><th>Total addresses</th><td id="r-total"></td></tr>
+          <tr><th>Usable hosts</th><td id="r-usable"></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="ad-slot">Ad space</div>
+
+  <h2>How to use this subnet calculator</h2>
+  <p>Enter an IPv4 address together with its CIDR prefix length, either combined as <code>192.168.1.10/24</code> or with the prefix typed separately after a slash. Click <strong>Calculate</strong> to see the full breakdown: the network and broadcast addresses that bound the subnet, the netmask and its inverse (wildcard mask), the first and last usable host addresses, and the total versus usable host counts. Invalid input — an octet outside 0–255 or a prefix outside 0–32 — shows a clear error instead of producing garbage output.</p>
+
+  <h2>Understanding CIDR and subnetting</h2>
+  <p>CIDR (Classless Inter-Domain Routing) notation expresses a subnet as an IP address plus a prefix length, such as <code>/24</code>, indicating how many leading bits of the address are fixed as the network portion. A <code>/24</code> network has 8 bits left for hosts, giving 256 total addresses — 254 usable once you subtract the network and broadcast addresses. Point-to-point links commonly use <code>/30</code> (2 usable hosts) or <code>/31</code> (2 usable hosts with no network/broadcast reserved, per RFC 3021). Subnetting is fundamental to network design: it lets you split a large address block into smaller, routable segments that match the size of each LAN, VLAN, or link, minimizing wasted addresses and containing broadcast traffic.</p>
+
+  <div class="privacy-note"><strong>Privacy:</strong> This tool processes everything client-side in your browser using JavaScript. Your IP address is never sent to any server.</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="y"></span> nex9.de — free developer tools</span>
+    <span class="links"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></span>
+  </div>
+</footer>
+<script>
+document.getElementById('y').textContent = new Date().getFullYear();
+const $ = id => document.getElementById(id);
+const input = $('input'), status = $('status'), results = $('results');
+
+function ipToInt(ip) {
+  const parts = ip.split('.').map(Number);
+  return ((parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3]) >>> 0;
+}
+function intToIp(int) {
+  return [(int >>> 24) & 255, (int >>> 16) & 255, (int >>> 8) & 255, int & 255].join('.');
+}
+function calcSubnet(ip, prefix) {
+  const ipInt = ipToInt(ip);
+  const maskInt = prefix === 0 ? 0 : (0xFFFFFFFF << (32 - prefix)) >>> 0;
+  const network = (ipInt & maskInt) >>> 0;
+  const broadcast = (network | (~maskInt >>> 0)) >>> 0;
+  const totalHosts = 2 ** (32 - prefix);
+  const usableHosts = prefix >= 31 ? 0 : totalHosts - 2;
+  const firstUsable = prefix >= 31 ? network : (network + 1) >>> 0;
+  const lastUsable = prefix >= 31 ? broadcast : (broadcast - 1) >>> 0;
+  return {
+    network: intToIp(network), broadcast: intToIp(broadcast),
+    netmask: intToIp(maskInt), wildcard: intToIp(~maskInt >>> 0),
+    firstUsable: intToIp(firstUsable), lastUsable: intToIp(lastUsable),
+    totalHosts, usableHosts
+  };
+}
+
+function isValidIp(ip) {
+  const parts = ip.split('.');
+  if (parts.length !== 4) return false;
+  return parts.every(p => /^\d{1,3}$/.test(p) && Number(p) >= 0 && Number(p) <= 255);
+}
+
+function showError(msg) {
+  status.innerHTML = '<span class="badge err">' + msg + '</span>';
+  results.style.display = 'none';
+}
+
+$('calcBtn').addEventListener('click', () => {
+  const raw = input.value.trim();
+  if (!raw.includes('/')) {
+    showError('Enter address as IP/prefix, e.g. 192.168.1.10/24');
+    return;
+  }
+  const [ip, prefixStr] = raw.split('/');
+  const prefix = Number(prefixStr);
+
+  if (!isValidIp(ip)) {
+    showError('Invalid IP address — each octet must be 0-255.');
+    return;
+  }
+  if (!Number.isInteger(prefix) || prefix < 0 || prefix > 32) {
+    showError('Invalid CIDR prefix — must be an integer between 0 and 32.');
+    return;
+  }
+
+  const r = calcSubnet(ip, prefix);
+  $('r-network').textContent = r.network + ' /' + prefix;
+  $('r-broadcast').textContent = r.broadcast;
+  $('r-netmask').textContent = r.netmask;
+  $('r-wildcard').textContent = r.wildcard;
+  $('r-first').textContent = r.firstUsable;
+  $('r-last').textContent = r.lastUsable;
+  $('r-total').textContent = r.totalHosts.toLocaleString();
+  $('r-usable').textContent = r.usableHosts.toLocaleString();
+
+  results.style.display = 'block';
+  status.innerHTML = '<span class="badge ok">Valid</span>';
+});
+</script>
+</body>
+</html>

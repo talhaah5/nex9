@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JSON Formatter & Validator — Free Online Tool | nex9</title>
+<meta name="description" content="Format, validate and beautify JSON online for free. Instantly detect syntax errors, minify or pretty-print JSON with adjustable indentation. Runs entirely in your browser.">
+<link rel="canonical" href="https://nex9.de/tools/json-formatter.html">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"JSON Formatter & Validator","url":"https://nex9.de/tools/json-formatter.html","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script src="/consent.js" defer></script>
+</head>
+<body>
+<header class="site">
+  <div class="bar">
+    <a class="brand" href="/"><span class="dot">▸</span> nex9<span style="color:var(--text-dim);font-weight:500">.de</span></a>
+    <nav class="top">
+      <a href="/#tools">Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/about.html">About</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/#tools">Tools</a> / JSON Formatter</div>
+  <h1>JSON Formatter & Validator</h1>
+  <p class="lede">Paste JSON to instantly validate, pretty-print or minify it. Everything runs locally in your browser — nothing is uploaded or stored.</p>
+
+  <div class="card">
+    <label for="input">Input JSON</label>
+    <textarea id="input" rows="10" placeholder='{"name":"nex9","tools":["json","base64","uuid"]}'></textarea>
+
+    <div class="row">
+      <label style="margin:0;display:flex;align-items:center;gap:6px;font-weight:500">
+        Indent:
+        <select id="indent" style="width:auto;padding:6px 10px">
+          <option value="2" selected>2 spaces</option>
+          <option value="4">4 spaces</option>
+          <option value="tab">Tab</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="row">
+      <button id="formatBtn">Format / Beautify</button>
+      <button id="minifyBtn" class="secondary">Minify</button>
+      <button id="copyBtn" class="secondary">Copy Output</button>
+      <button id="clearBtn" class="secondary">Clear</button>
+      <span id="status"></span>
+    </div>
+
+    <label for="output">Output</label>
+    <div class="output-box" id="output">Output will appear here…</div>
+  </div>
+
+  <div class="ad-slot">Ad space</div>
+
+  <h2>How to use this JSON formatter</h2>
+  <p>Paste or type any JSON document into the input box above, then click <strong>Format / Beautify</strong> to get a clean, indented version, or <strong>Minify</strong> to strip whitespace for production use. If the JSON is invalid, the tool tells you exactly what went wrong so you can fix it quickly.</p>
+
+  <h2>Why validate JSON?</h2>
+  <p>Malformed JSON is one of the most common causes of broken API integrations and config files. A single missing comma or unescaped quote will cause <code>JSON.parse</code> to throw in almost every programming language. Validating and formatting your JSON before shipping it catches these mistakes early.</p>
+
+  <div class="privacy-note"><strong>Privacy:</strong> This tool processes everything client-side in your browser using JavaScript. Your JSON is never sent to any server.</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="y"></span> nex9.de — free developer tools</span>
+    <span class="links"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></span>
+  </div>
+</footer>
+<script>
+document.getElementById('y').textContent = new Date().getFullYear();
+const $ = id => document.getElementById(id);
+const input = $('input'), output = $('output'), status = $('status');
+
+function indentValue() {
+  const v = $('indent').value;
+  return v === 'tab' ? '\t' : Number(v);
+}
+
+function showError(e) {
+  output.textContent = 'Invalid JSON: ' + e.message;
+  status.innerHTML = '<span class="badge err">Invalid</span>';
+}
+
+function showOk() {
+  status.innerHTML = '<span class="badge ok">Valid</span>';
+}
+
+$('formatBtn').addEventListener('click', () => {
+  try {
+    const parsed = JSON.parse(input.value);
+    output.textContent = JSON.stringify(parsed, null, indentValue());
+    showOk();
+  } catch (e) { showError(e); }
+});
+
+$('minifyBtn').addEventListener('click', () => {
+  try {
+    const parsed = JSON.parse(input.value);
+    output.textContent = JSON.stringify(parsed);
+    showOk();
+  } catch (e) { showError(e); }
+});
+
+$('copyBtn').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(output.textContent);
+    status.innerHTML = '<span class="badge ok">Copied</span>';
+  } catch (e) { status.textContent = 'Copy failed'; }
+});
+
+$('clearBtn').addEventListener('click', () => {
+  input.value = '';
+  output.textContent = 'Output will appear here…';
+  status.textContent = '';
+});
+</script>
+</body>
+</html>

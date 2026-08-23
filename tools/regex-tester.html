@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Regex Tester — Free Online Tool | nex9</title>
+<meta name="description" content="Test regular expressions live against sample text. See matches highlighted, capture groups, and match positions instantly. Free regex tester, runs entirely in your browser.">
+<link rel="canonical" href="https://nex9.de/tools/regex-tester.html">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Regex Tester","url":"https://nex9.de/tools/regex-tester.html","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script src="/consent.js" defer></script>
+</head>
+<body>
+<header class="site">
+  <div class="bar">
+    <a class="brand" href="/"><span class="dot">▸</span> nex9<span style="color:var(--text-dim);font-weight:500">.de</span></a>
+    <nav class="top">
+      <a href="/#tools">Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/about.html">About</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/#tools">Tools</a> / Regex Tester</div>
+  <h1>Regex Tester</h1>
+  <p class="lede">Write a pattern, paste a test string, and see matches highlighted live with their capture groups and positions.</p>
+
+  <div class="card">
+    <label for="pattern">Pattern</label>
+    <input type="text" id="pattern" placeholder="e.g. (\w+)@(\w+\.\w+)">
+    <label for="flags">Flags</label>
+    <input type="text" id="flags" value="g" placeholder="gimsuy">
+    <label for="testStr">Test String</label>
+    <textarea id="testStr" rows="8" placeholder="Paste text to test your regex against…"></textarea>
+
+    <div class="row">
+      <span id="status"></span>
+    </div>
+
+    <label>Highlighted Matches</label>
+    <div class="output-box" id="highlighted">Matches will be highlighted here…</div>
+
+    <label>Match Details</label>
+    <div id="matchTableWrap"><p style="color:var(--text-dim)">No matches yet.</p></div>
+  </div>
+
+  <div class="ad-slot">Ad space</div>
+
+  <h2>How to use this regex tester</h2>
+  <p>Type a regular expression pattern into the first field, adjust the flags if needed (defaults to global matching), then paste or type the text you want to test in the box below. Results update live: the test string is re-rendered with every match wrapped in a highlight, and a table below lists each match's position along with any numbered or named capture groups.</p>
+
+  <h2>Why test regex before shipping it</h2>
+  <p>Regular expressions are notoriously easy to get subtly wrong — an unescaped character or a greedy quantifier can match far more, or far less, than intended. Testing against real sample data before dropping a pattern into validation logic or a data-extraction script catches these edge cases early, and seeing capture groups broken out separately makes it obvious whether your groups are indexed the way your code expects.</p>
+
+  <div class="privacy-note"><strong>Privacy:</strong> This tool runs 100% client-side in your browser using JavaScript. Your pattern and test text are never uploaded or sent to a server.</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="y"></span> nex9.de — free developer tools</span>
+    <span class="links"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></span>
+  </div>
+</footer>
+<script>
+document.getElementById('y').textContent = new Date().getFullYear();
+const $ = id => document.getElementById(id);
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function validFlags(flags) {
+  return /^[gimsuy]*$/.test(flags);
+}
+
+function runTest() {
+  const pattern = $('pattern').value;
+  const flags = $('flags').value;
+  const text = $('testStr').value;
+  const status = $('status');
+  const highlighted = $('highlighted');
+  const tableWrap = $('matchTableWrap');
+
+  if (!pattern) {
+    status.innerHTML = '';
+    highlighted.textContent = 'Matches will be highlighted here…';
+    tableWrap.innerHTML = '<p style="color:var(--text-dim)">No matches yet.</p>';
+    return;
+  }
+
+  if (!validFlags(flags)) {
+    status.innerHTML = '<span class="badge err">Invalid flags</span>';
+    highlighted.textContent = 'Flags may only contain: g i m s u y';
+    tableWrap.innerHTML = '<p style="color:var(--text-dim)">No matches yet.</p>';
+    return;
+  }
+
+  let re;
+  try {
+    re = new RegExp(pattern, flags.includes('g') ? flags : flags + 'g');
+  } catch (e) {
+    status.innerHTML = '<span class="badge err">Invalid regex</span>';
+    highlighted.textContent = e.message;
+    tableWrap.innerHTML = '<p style="color:var(--text-dim)">No matches yet.</p>';
+    return;
+  }
+
+  const matches = [];
+  let m;
+  let guard = 0;
+  while ((m = re.exec(text)) !== null && guard < 10000) {
+    matches.push(m);
+    if (m[0] === '') re.lastIndex++;
+    guard++;
+  }
+
+  status.innerHTML = '<span class="badge ok">Valid — ' + matches.length + ' match' + (matches.length === 1 ? '' : 'es') + '</span>';
+
+  // Build highlighted output
+  let html = '';
+  let cursor = 0;
+  for (const match of matches) {
+    html += escapeHtml(text.slice(cursor, match.index));
+    html += '<mark>' + escapeHtml(match[0]) + '</mark>';
+    cursor = match.index + match[0].length;
+  }
+  html += escapeHtml(text.slice(cursor));
+  highlighted.innerHTML = html || 'Matches will be highlighted here…';
+
+  // Build match table
+  if (matches.length === 0) {
+    tableWrap.innerHTML = '<p style="color:var(--text-dim)">No matches found.</p>';
+    return;
+  }
+
+  let table = '<table><thead><tr><th>#</th><th>Index</th><th>Match</th><th>Groups</th></tr></thead><tbody>';
+  matches.forEach((match, i) => {
+    const numbered = match.slice(1).map((g, gi) => (gi + 1) + ': ' + (g === undefined ? '(undefined)' : g)).join('<br>');
+    const named = match.groups
+      ? Object.entries(match.groups).map(([k, v]) => k + ': ' + (v === undefined ? '(undefined)' : v)).join('<br>')
+      : '';
+    const groupsHtml = [numbered, named].filter(Boolean).join('<br>') || '<span style="color:var(--text-dim)">none</span>';
+    table += '<tr><td>' + (i + 1) + '</td><td>' + match.index + '</td><td>' + escapeHtml(match[0]) + '</td><td>' + groupsHtml + '</td></tr>';
+  });
+  table += '</tbody></table>';
+  tableWrap.innerHTML = table;
+}
+
+$('pattern').addEventListener('input', runTest);
+$('flags').addEventListener('input', runTest);
+$('testStr').addEventListener('input', runTest);
+</script>
+</body>
+</html>

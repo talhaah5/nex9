@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unix Timestamp Converter — Free Online Tool | nex9</title>
+<meta name="description" content="Convert Unix timestamps to human-readable dates and back, in seconds or milliseconds. Live current timestamp clock included. Free, fast, runs entirely in your browser.">
+<link rel="canonical" href="https://nex9.de/tools/timestamp-converter.html">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Unix Timestamp Converter","url":"https://nex9.de/tools/timestamp-converter.html","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script src="/consent.js" defer></script>
+</head>
+<body>
+<header class="site">
+  <div class="bar">
+    <a class="brand" href="/"><span class="dot">▸</span> nex9<span style="color:var(--text-dim);font-weight:500">.de</span></a>
+    <nav class="top">
+      <a href="/#tools">Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/about.html">About</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/#tools">Tools</a> / Timestamp Converter</div>
+  <h1>Unix Timestamp Converter</h1>
+  <p class="lede">See the current Unix timestamp update live, convert any timestamp to a readable date, or turn a date back into a timestamp — in seconds or milliseconds.</p>
+
+  <div class="card">
+    <label>Current Unix Timestamp</label>
+    <div class="output-box" id="liveClock">…</div>
+    <div class="row">
+      <button id="copySecBtn" class="secondary">Copy Seconds</button>
+      <button id="copyMsBtn" class="secondary">Copy Milliseconds</button>
+      <span id="liveStatus"></span>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <label for="tsInput">Unix Timestamp → Date</label>
+    <input type="text" id="tsInput" placeholder="e.g. 1700000000 or 1700000000000">
+    <div class="row">
+      <button id="tsConvertBtn">Convert</button>
+      <span id="tsStatus"></span>
+    </div>
+    <label>Local Time</label>
+    <div class="output-box" id="tsLocalOut">Output will appear here…</div>
+    <label>UTC</label>
+    <div class="output-box" id="tsUtcOut">Output will appear here…</div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <label for="dateInput">Date → Unix Timestamp</label>
+    <input type="datetime-local" id="dateInput" step="1">
+    <div class="row">
+      <button id="dateConvertBtn">Convert</button>
+      <span id="dateStatus"></span>
+    </div>
+    <label>Seconds</label>
+    <div class="output-box" id="dateSecOut">Output will appear here…</div>
+    <label>Milliseconds</label>
+    <div class="output-box" id="dateMsOut">Output will appear here…</div>
+  </div>
+
+  <div class="ad-slot">Ad space</div>
+
+  <h2>How to use this timestamp converter</h2>
+  <p>The panel at the top shows the current Unix timestamp updating every second, handy when you need a value to paste into a script or database query right now. To convert an existing timestamp, paste it into the second box — the tool automatically detects whether it's in seconds or milliseconds based on its length — and click <strong>Convert</strong> to see it as a local and UTC date. To go the other way, pick a date and time in the third box and convert it into both second and millisecond timestamps.</p>
+
+  <h2>Why Unix timestamps matter</h2>
+  <p>Unix time counts the seconds (or milliseconds) elapsed since January 1, 1970 UTC, and it's the backbone of how most systems store and compare dates internally — logs, databases, APIs and JWTs all lean on it. Because it's just a number with no timezone baked in, developers constantly need to translate it into something readable, or vice versa, when debugging or writing test data.</p>
+
+  <div class="privacy-note"><strong>Privacy:</strong> This tool runs 100% client-side in your browser using JavaScript. No timestamps or dates are ever uploaded or sent to a server.</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="y"></span> nex9.de — free developer tools</span>
+    <span class="links"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></span>
+  </div>
+</footer>
+<script>
+document.getElementById('y').textContent = new Date().getFullYear();
+const $ = id => document.getElementById(id);
+
+let lastSec = 0, lastMs = 0;
+
+function tickClock() {
+  const now = Date.now();
+  lastMs = now;
+  lastSec = Math.floor(now / 1000);
+  $('liveClock').textContent = 'Seconds: ' + lastSec + '\nMilliseconds: ' + lastMs;
+}
+tickClock();
+setInterval(tickClock, 1000);
+
+$('copySecBtn').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(String(lastSec));
+    $('liveStatus').innerHTML = '<span class="badge ok">Copied</span>';
+  } catch (e) { $('liveStatus').textContent = 'Copy failed'; }
+});
+
+$('copyMsBtn').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(String(lastMs));
+    $('liveStatus').innerHTML = '<span class="badge ok">Copied</span>';
+  } catch (e) { $('liveStatus').textContent = 'Copy failed'; }
+});
+
+function formatLocal(d) {
+  return d.toString();
+}
+function formatUtc(d) {
+  return d.toUTCString() + ' (' + d.toISOString() + ')';
+}
+
+$('tsConvertBtn').addEventListener('click', () => {
+  const raw = $('tsInput').value.trim();
+  if (!raw || !/^-?\d+$/.test(raw)) {
+    $('tsStatus').innerHTML = '<span class="badge err">Invalid</span>';
+    $('tsLocalOut').textContent = 'Enter a numeric timestamp.';
+    $('tsUtcOut').textContent = 'Enter a numeric timestamp.';
+    return;
+  }
+  const digits = raw.replace('-', '').length;
+  const ms = digits >= 13 ? Number(raw) : Number(raw) * 1000;
+  const d = new Date(ms);
+  if (isNaN(d.getTime())) {
+    $('tsStatus').innerHTML = '<span class="badge err">Invalid</span>';
+    $('tsLocalOut').textContent = 'Could not parse that timestamp.';
+    $('tsUtcOut').textContent = 'Could not parse that timestamp.';
+    return;
+  }
+  $('tsStatus').innerHTML = '<span class="badge ok">' + (digits >= 13 ? 'Milliseconds' : 'Seconds') + '</span>';
+  $('tsLocalOut').textContent = formatLocal(d);
+  $('tsUtcOut').textContent = formatUtc(d);
+});
+
+$('dateConvertBtn').addEventListener('click', () => {
+  const raw = $('dateInput').value;
+  if (!raw) {
+    $('dateStatus').innerHTML = '<span class="badge err">Invalid</span>';
+    $('dateSecOut').textContent = 'Pick a date and time.';
+    $('dateMsOut').textContent = 'Pick a date and time.';
+    return;
+  }
+  const d = new Date(raw);
+  if (isNaN(d.getTime())) {
+    $('dateStatus').innerHTML = '<span class="badge err">Invalid</span>';
+    $('dateSecOut').textContent = 'Could not parse that date.';
+    $('dateMsOut').textContent = 'Could not parse that date.';
+    return;
+  }
+  $('dateStatus').innerHTML = '<span class="badge ok">Converted</span>';
+  $('dateSecOut').textContent = String(Math.floor(d.getTime() / 1000));
+  $('dateMsOut').textContent = String(d.getTime());
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Word Counter — Free Online Tool | nex9</title>
+<meta name="description" content="Count words, characters, sentences and paragraphs in real time as you type, plus an estimated reading time. Free, private word counter that runs in your browser.">
+<link rel="canonical" href="https://nex9.de/tools/word-counter.html">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Word Counter","url":"https://nex9.de/tools/word-counter.html","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script src="/consent.js" defer></script>
+</head>
+<body>
+<header class="site">
+  <div class="bar">
+    <a class="brand" href="/"><span class="dot">▸</span> nex9<span style="color:var(--text-dim);font-weight:500">.de</span></a>
+    <nav class="top">
+      <a href="/#tools">Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/about.html">About</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/#tools">Tools</a> / Word Counter</div>
+  <h1>Word Counter</h1>
+  <p class="lede">Type or paste your text below to see live word, character, sentence and paragraph counts, plus an estimated reading time. Updates instantly as you type.</p>
+
+  <div class="card">
+    <label for="input">Your text</label>
+    <textarea id="input" rows="12" placeholder="Start typing or paste your text here…"></textarea>
+
+    <table>
+      <tbody>
+        <tr><td>Words</td><td id="statWords">0</td></tr>
+        <tr><td>Characters (with spaces)</td><td id="statCharsWith">0</td></tr>
+        <tr><td>Characters (without spaces)</td><td id="statCharsWithout">0</td></tr>
+        <tr><td>Sentences</td><td id="statSentences">0</td></tr>
+        <tr><td>Paragraphs</td><td id="statParagraphs">0</td></tr>
+        <tr><td>Estimated reading time</td><td id="statReading">~0 min read</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="ad-slot">Ad space</div>
+
+  <h2>How to use this word counter</h2>
+  <p>Just start typing or paste text into the box above — every statistic updates live with no button to click. It's useful for checking essay or article length, meeting a strict character limit for a tweet or meta description, or estimating how long a piece will take readers to get through.</p>
+
+  <h2>How the counts are calculated</h2>
+  <p>Words are counted as whitespace-separated tokens. Sentences are counted by splitting on runs of <code>. ! ?</code>, and paragraphs by splitting on blank lines. Reading time is estimated at 225 words per minute, a commonly used average adult silent-reading speed, rounded up to the nearest minute so short texts still show at least one minute.</p>
+
+  <div class="privacy-note"><strong>Privacy:</strong> This tool processes everything client-side in your browser using JavaScript. Your text is never sent to any server.</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="y"></span> nex9.de — free developer tools</span>
+    <span class="links"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></span>
+  </div>
+</footer>
+<script>
+document.getElementById('y').textContent = new Date().getFullYear();
+const $ = id => document.getElementById(id);
+const input = $('input');
+const WPM = 225;
+
+function countStats(text) {
+  const words = text.trim() === '' ? [] : text.trim().split(/\s+/);
+  const charsWith = text.length;
+  const charsWithout = text.replace(/\s/g, '').length;
+  const sentences = text.trim() === '' ? [] : text.trim().split(/[.!?]+(?:\s|$)/).filter(s => s.trim() !== '');
+  const paragraphs = text.trim() === '' ? [] : text.split(/\n\s*\n/).filter(p => p.trim() !== '');
+  const readingMinutes = words.length === 0 ? 0 : Math.max(1, Math.ceil(words.length / WPM));
+
+  return {
+    words: words.length,
+    charsWith,
+    charsWithout,
+    sentences: sentences.length,
+    paragraphs: paragraphs.length,
+    readingMinutes
+  };
+}
+
+function render() {
+  const s = countStats(input.value);
+  $('statWords').textContent = s.words;
+  $('statCharsWith').textContent = s.charsWith;
+  $('statCharsWithout').textContent = s.charsWithout;
+  $('statSentences').textContent = s.sentences;
+  $('statParagraphs').textContent = s.paragraphs;
+  $('statReading').textContent = '~' + s.readingMinutes + ' min read';
+}
+
+input.addEventListener('input', render);
+render();
+</script>
+</body>
+</html>

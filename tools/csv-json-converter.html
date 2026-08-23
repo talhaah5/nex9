@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSV ⇄ JSON Converter — Free Online Tool | nex9</title>
+<meta name="description" content="Convert CSV to JSON and JSON to CSV instantly. Handles quoted fields, custom headers, and proper escaping. Free two-way converter that runs entirely in your browser.">
+<link rel="canonical" href="https://nex9.de/tools/csv-json-converter.html">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"CSV to JSON Converter","url":"https://nex9.de/tools/csv-json-converter.html","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script src="/consent.js" defer></script>
+</head>
+<body>
+<header class="site">
+  <div class="bar">
+    <a class="brand" href="/"><span class="dot">▸</span> nex9<span style="color:var(--text-dim);font-weight:500">.de</span></a>
+    <nav class="top">
+      <a href="/#tools">Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/about.html">About</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/#tools">Tools</a> / CSV ⇄ JSON Converter</div>
+  <h1>CSV ⇄ JSON Converter</h1>
+  <p class="lede">Convert CSV data to a JSON array of objects, or convert a JSON array back to CSV — both directions, properly quoted and escaped.</p>
+
+  <div class="card">
+    <h2 style="margin-top:0">CSV → JSON</h2>
+    <label for="csvInput">CSV Input</label>
+    <textarea id="csvInput" rows="8" placeholder="name,age,city&#10;Ada,30,London&#10;Grace,34,New York"></textarea>
+
+    <div class="row">
+      <label style="margin:0;display:flex;align-items:center;gap:6px;font-weight:500">
+        <input type="checkbox" id="hasHeader" checked style="width:auto">
+        First row is header
+      </label>
+    </div>
+
+    <div class="row">
+      <button id="csvToJsonBtn">Convert</button>
+      <button id="copyJsonBtn" class="secondary">Copy</button>
+      <span id="csvStatus"></span>
+    </div>
+
+    <label for="jsonOutput">JSON Output</label>
+    <div class="output-box" id="jsonOutput">Output will appear here…</div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h2 style="margin-top:0">JSON → CSV</h2>
+    <label for="jsonInput">JSON Input (array of flat objects)</label>
+    <textarea id="jsonInput" rows="8" placeholder='[{"name":"Ada","age":30,"city":"London"},{"name":"Grace","age":34,"city":"New York"}]'></textarea>
+
+    <div class="row">
+      <button id="jsonToCsvBtn">Convert</button>
+      <button id="copyCsvBtn" class="secondary">Copy</button>
+      <span id="jsonStatus"></span>
+    </div>
+
+    <label for="csvOutput">CSV Output</label>
+    <div class="output-box" id="csvOutput">Output will appear here…</div>
+  </div>
+
+  <div class="ad-slot">Ad space</div>
+
+  <h2>How to use this CSV ⇄ JSON converter</h2>
+  <p>To convert CSV to JSON, paste your CSV data into the first box and click <strong>Convert</strong>. If your data has a header row, leave "First row is header" checked and those values become the object keys; otherwise the tool assigns generic keys like <code>col1</code>, <code>col2</code>. To go the other direction, paste a JSON array of objects into the second box and click <strong>Convert</strong> — the tool builds a header row from the union of all keys and quotes any field containing a comma, quote, or newline.</p>
+
+  <h2>Why convert between CSV and JSON</h2>
+  <p>CSV is the lingua franca of spreadsheets and data exports, while JSON is what most APIs and JavaScript code expect. Moving between the two formats by hand is tedious and error-prone, especially once quoted fields, embedded commas, or missing values enter the picture — this tool handles the RFC 4180 quoting rules for you so nothing gets mangled in either direction.</p>
+
+  <div class="privacy-note"><strong>Privacy:</strong> This tool runs 100% client-side in your browser using JavaScript. Your CSV and JSON data are never uploaded or sent to a server.</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="y"></span> nex9.de — free developer tools</span>
+    <span class="links"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></span>
+  </div>
+</footer>
+<script>
+document.getElementById('y').textContent = new Date().getFullYear();
+const $ = id => document.getElementById(id);
+
+function parseCSV(text) {
+  const rows = [];
+  let row = [], field = '', inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i], next = text[i + 1];
+    if (inQuotes) {
+      if (c === '"' && next === '"') { field += '"'; i++; }
+      else if (c === '"') { inQuotes = false; }
+      else { field += c; }
+    } else {
+      if (c === '"') { inQuotes = true; }
+      else if (c === ',') { row.push(field); field = ''; }
+      else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+      else if (c === '\r') { /* skip */ }
+      else { field += c; }
+    }
+  }
+  if (field.length || row.length) { row.push(field); rows.push(row); }
+  return rows;
+}
+
+function csvToJson(text, hasHeader) {
+  const rows = parseCSV(text).filter(r => !(r.length === 1 && r[0] === ''));
+  if (rows.length === 0) return [];
+
+  let headers;
+  let dataRows;
+  if (hasHeader) {
+    headers = rows[0];
+    dataRows = rows.slice(1);
+  } else {
+    const width = Math.max(...rows.map(r => r.length));
+    headers = Array.from({ length: width }, (_, i) => 'col' + (i + 1));
+    dataRows = rows;
+  }
+
+  return dataRows.map(row => {
+    const obj = {};
+    headers.forEach((h, i) => { obj[h] = row[i] !== undefined ? row[i] : ''; });
+    return obj;
+  });
+}
+
+function csvField(value) {
+  const str = value === null || value === undefined ? '' : String(value);
+  if (/[",\n\r]/.test(str)) {
+    return '"' + str.replace(/"/g, '""') + '"';
+  }
+  return str;
+}
+
+function jsonToCsv(data) {
+  if (!Array.isArray(data)) throw new Error('JSON input must be an array of objects.');
+  if (data.length === 0) return '';
+
+  const keys = [];
+  const seen = new Set();
+  data.forEach(row => {
+    if (typeof row !== 'object' || row === null || Array.isArray(row)) {
+      throw new Error('Every array item must be a flat object.');
+    }
+    Object.keys(row).forEach(k => { if (!seen.has(k)) { seen.add(k); keys.push(k); } });
+  });
+
+  const lines = [keys.map(csvField).join(',')];
+  data.forEach(row => {
+    lines.push(keys.map(k => csvField(row[k])).join(','));
+  });
+  return lines.join('\r\n');
+}
+
+$('csvToJsonBtn').addEventListener('click', () => {
+  try {
+    const result = csvToJson($('csvInput').value, $('hasHeader').checked);
+    $('jsonOutput').textContent = JSON.stringify(result, null, 2);
+    $('csvStatus').innerHTML = '<span class="badge ok">Converted</span>';
+  } catch (e) {
+    $('jsonOutput').textContent = 'Error: ' + e.message;
+    $('csvStatus').innerHTML = '<span class="badge err">Error</span>';
+  }
+});
+
+$('jsonToCsvBtn').addEventListener('click', () => {
+  try {
+    const parsed = JSON.parse($('jsonInput').value);
+    const csv = jsonToCsv(parsed);
+    $('csvOutput').textContent = csv || '(empty array)';
+    $('jsonStatus').innerHTML = '<span class="badge ok">Converted</span>';
+  } catch (e) {
+    $('csvOutput').textContent = 'Error: ' + e.message;
+    $('jsonStatus').innerHTML = '<span class="badge err">Error</span>';
+  }
+});
+
+$('copyJsonBtn').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText($('jsonOutput').textContent);
+    $('csvStatus').innerHTML = '<span class="badge ok">Copied</span>';
+  } catch (e) { $('csvStatus').textContent = 'Copy failed'; }
+});
+
+$('copyCsvBtn').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText($('csvOutput').textContent);
+    $('jsonStatus').innerHTML = '<span class="badge ok">Copied</span>';
+  } catch (e) { $('jsonStatus').textContent = 'Copy failed'; }
+});
+</script>
+</body>
+</html>

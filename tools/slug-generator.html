@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>URL Slug Generator — Free Online Tool | nex9</title>
+<meta name="description" content="Convert any text into a clean, URL-safe slug online for free. Normalizes accented characters, strips special characters, and lets you choose hyphen or underscore separators. Runs entirely in your browser.">
+<link rel="canonical" href="https://nex9.de/tools/slug-generator.html">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"URL Slug Generator","url":"https://nex9.de/tools/slug-generator.html","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script src="/consent.js" defer></script>
+</head>
+<body>
+<header class="site">
+  <div class="bar">
+    <a class="brand" href="/"><span class="dot">▸</span> nex9<span style="color:var(--text-dim);font-weight:500">.de</span></a>
+    <nav class="top">
+      <a href="/#tools">Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/about.html">About</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/#tools">Tools</a> / URL Slug Generator</div>
+  <h1>URL Slug Generator</h1>
+  <p class="lede">Type or paste any text to instantly get a clean, URL-safe slug. Accented characters are normalized, everything else is lowercased and hyphenated. Everything runs locally in your browser — nothing is uploaded or stored.</p>
+
+  <div class="card">
+    <label for="input">Input text</label>
+    <textarea id="input" rows="4" placeholder="Café con Leche & Churros — Recipe #1"></textarea>
+
+    <div class="row">
+      <label style="margin:0;display:flex;align-items:center;gap:6px;font-weight:500">
+        Separator:
+        <select id="sep" style="width:auto;padding:6px 10px">
+          <option value="-" selected>Hyphen ( - )</option>
+          <option value="_">Underscore ( _ )</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="row">
+      <button id="copyBtn" class="secondary">Copy Output</button>
+      <button id="clearBtn" class="secondary">Clear</button>
+      <span id="status"></span>
+    </div>
+
+    <label for="output">Output</label>
+    <div class="output-box" id="output">Output will appear here…</div>
+  </div>
+
+  <div class="ad-slot">Ad space</div>
+
+  <h2>How to use this slug generator</h2>
+  <p>Type or paste any text — a blog post title, product name, or page heading — into the input box above. The tool updates the output instantly as you type, converting your text into a lowercase, URL-safe slug. Accented letters like <code>é</code>, <code>ñ</code> or <code>ü</code> are automatically normalized to their plain ASCII equivalents (so "café" becomes "cafe"), and any run of spaces, punctuation, or symbols is collapsed into a single separator. Switch between hyphen and underscore separators using the dropdown, then click <strong>Copy Output</strong> to grab the result.</p>
+
+  <h2>Why slugs matter for URLs</h2>
+  <p>A slug is the human-readable part of a URL that identifies a specific page, such as <code>/blog/my-first-post</code>. Clean slugs improve SEO because search engines weigh keywords in the URL, they're easier for users to read and share, and they avoid encoding issues that arise from spaces, uppercase letters, or special characters in a URL. Most CMS platforms, static site generators, and e-commerce systems require slugs to contain only lowercase letters, numbers, and hyphens — this tool produces exactly that format so you don't have to write the normalization logic yourself.</p>
+
+  <div class="privacy-note"><strong>Privacy:</strong> This tool processes everything client-side in your browser using JavaScript. Your text is never sent to any server.</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="y"></span> nex9.de — free developer tools</span>
+    <span class="links"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></span>
+  </div>
+</footer>
+<script>
+document.getElementById('y').textContent = new Date().getFullYear();
+const $ = id => document.getElementById(id);
+const input = $('input'), output = $('output'), status = $('status');
+
+function slugify(text, sep) {
+  const normalized = text
+    .toLowerCase()
+    .trim()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '');
+  const withSep = normalized.replace(/[^a-z0-9]+/g, sep);
+  const sepEscaped = sep.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return withSep.replace(new RegExp('^' + sepEscaped + '+|' + sepEscaped + '+$', 'g'), '');
+}
+
+function update() {
+  const sep = $('sep').value;
+  const result = slugify(input.value, sep);
+  output.textContent = result || 'Output will appear here…';
+}
+
+input.addEventListener('input', update);
+$('sep').addEventListener('change', update);
+
+$('copyBtn').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(output.textContent);
+    status.innerHTML = '<span class="badge ok">Copied</span>';
+  } catch (e) { status.textContent = 'Copy failed'; }
+});
+
+$('clearBtn').addEventListener('click', () => {
+  input.value = '';
+  output.textContent = 'Output will appear here…';
+  status.textContent = '';
+});
+</script>
+</body>
+</html>

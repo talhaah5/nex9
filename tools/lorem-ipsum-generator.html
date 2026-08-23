@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lorem Ipsum Generator — Free Online Tool | nex9</title>
+<meta name="description" content="Generate placeholder Lorem Ipsum text by paragraphs, sentences, or words. Fast, customizable dummy text for mockups and layouts, free and runs in your browser.">
+<link rel="canonical" href="https://nex9.de/tools/lorem-ipsum-generator.html">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Lorem Ipsum Generator","url":"https://nex9.de/tools/lorem-ipsum-generator.html","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script src="/consent.js" defer></script>
+</head>
+<body>
+<header class="site">
+  <div class="bar">
+    <a class="brand" href="/"><span class="dot">▸</span> nex9<span style="color:var(--text-dim);font-weight:500">.de</span></a>
+    <nav class="top">
+      <a href="/#tools">Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/about.html">About</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/#tools">Tools</a> / Lorem Ipsum Generator</div>
+  <h1>Lorem Ipsum Generator</h1>
+  <p class="lede">Generate placeholder text by paragraphs, sentences, or words for mockups, layouts, and design comps.</p>
+
+  <div class="card">
+    <div class="row">
+      <label style="margin:0;display:flex;align-items:center;gap:6px;font-weight:500">
+        Generate by:
+        <select id="unit" style="width:auto;padding:6px 10px">
+          <option value="paragraphs" selected>Paragraphs</option>
+          <option value="sentences">Sentences</option>
+          <option value="words">Words</option>
+        </select>
+      </label>
+      <label style="margin:0;display:flex;align-items:center;gap:6px;font-weight:500">
+        Count:
+        <input type="number" id="count" value="3" min="1" max="500" style="width:90px">
+      </label>
+    </div>
+    <div class="row">
+      <label style="margin:0;display:flex;align-items:center;gap:6px;font-weight:500">
+        <input type="checkbox" id="startClassic" checked style="width:auto">
+        Start with "Lorem ipsum dolor sit amet…"
+      </label>
+    </div>
+    <div class="row">
+      <button id="generateBtn">Generate</button>
+      <button id="copyBtn" class="secondary">Copy</button>
+      <span id="status"></span>
+    </div>
+
+    <label for="output">Output</label>
+    <div class="output-box" id="output">Output will appear here…</div>
+  </div>
+
+  <div class="ad-slot">Ad space</div>
+
+  <h2>How to use this Lorem Ipsum generator</h2>
+  <p>Choose whether you want output measured in paragraphs, sentences, or words, set the count, and click <strong>Generate</strong>. Leave "Start with Lorem ipsum dolor sit amet…" checked if you want the traditional opening — useful when a client or teammate expects to recognize placeholder text at a glance. Click <strong>Copy</strong> to grab the result for pasting straight into a design tool or CMS.</p>
+
+  <h2>Why designers still use Lorem Ipsum</h2>
+  <p>Lorem Ipsum has been the standard placeholder text in publishing and design since the 1500s, scrambled from a passage of Cicero's Latin so it reads as plausible text without carrying any real meaning that would distract from layout, typography, and spacing decisions. It's still the fastest way to fill a mockup with realistic-looking copy before real content is ready.</p>
+
+  <div class="privacy-note"><strong>Privacy:</strong> This tool runs 100% client-side in your browser using JavaScript. Nothing you generate or type here is ever uploaded or sent to a server.</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="y"></span> nex9.de — free developer tools</span>
+    <span class="links"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></span>
+  </div>
+</footer>
+<script>
+document.getElementById('y').textContent = new Date().getFullYear();
+const $ = id => document.getElementById(id);
+
+const WORDS = [
+  'lorem','ipsum','dolor','sit','amet','consectetur','adipiscing','elit','sed','do',
+  'eiusmod','tempor','incididunt','ut','labore','et','dolore','magna','aliqua','enim',
+  'ad','minim','veniam','quis','nostrud','exercitation','ullamco','laboris','nisi','aliquip',
+  'ex','ea','commodo','consequat','duis','aute','irure','in','reprehenderit','voluptate',
+  'velit','esse','cillum','fugiat','nulla','pariatur','excepteur','sint','occaecat','cupidatat',
+  'non','proident','sunt','culpa','qui','officia','deserunt','mollit','anim','id',
+  'est','laborum','at','vero','eos','accusamus','iusto','odio','dignissimos','ducimus'
+];
+
+function randInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function pickWord() {
+  return WORDS[randInt(0, WORDS.length - 1)];
+}
+
+function capitalize(word) {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
+function makeSentence(minWords, maxWords) {
+  const len = randInt(minWords, maxWords);
+  const words = [];
+  for (let i = 0; i < len; i++) words.push(pickWord());
+  words[0] = capitalize(words[0]);
+  return words.join(' ') + '.';
+}
+
+function makeParagraph(sentenceCount) {
+  const sentences = [];
+  for (let i = 0; i < sentenceCount; i++) sentences.push(makeSentence(6, 18));
+  return sentences.join(' ');
+}
+
+function generate(unit, count, startClassic) {
+  const classicOpener = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
+
+  if (unit === 'words') {
+    const words = [];
+    if (startClassic) {
+      const opener = ['Lorem','ipsum','dolor','sit','amet'];
+      words.push(...opener.slice(0, Math.min(count, opener.length)));
+    }
+    while (words.length < count) words.push(pickWord());
+    words[0] = capitalize(words[0]);
+    return words.slice(0, count).join(' ');
+  }
+
+  if (unit === 'sentences') {
+    const sentences = [];
+    let start = 0;
+    if (startClassic) { sentences.push(classicOpener); start = 1; }
+    for (let i = start; i < count; i++) sentences.push(makeSentence(6, 18));
+    return sentences.join(' ');
+  }
+
+  // paragraphs
+  const paragraphs = [];
+  for (let p = 0; p < count; p++) {
+    const sentenceCount = randInt(3, 6);
+    if (p === 0 && startClassic) {
+      const rest = [];
+      for (let i = 1; i < sentenceCount; i++) rest.push(makeSentence(6, 18));
+      paragraphs.push([classicOpener, ...rest].join(' '));
+    } else {
+      paragraphs.push(makeParagraph(sentenceCount));
+    }
+  }
+  return paragraphs.join('\n\n');
+}
+
+$('generateBtn').addEventListener('click', () => {
+  const unit = $('unit').value;
+  let count = Number($('count').value);
+  const max = unit === 'words' ? 500 : unit === 'sentences' ? 50 : 20;
+  if (!count || count < 1) count = 1;
+  if (count > max) count = max;
+  $('count').value = count;
+
+  const startClassic = $('startClassic').checked;
+  $('output').textContent = generate(unit, count, startClassic);
+  $('status').innerHTML = '<span class="badge ok">Generated</span>';
+});
+
+$('copyBtn').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText($('output').textContent);
+    $('status').innerHTML = '<span class="badge ok">Copied</span>';
+  } catch (e) { $('status').textContent = 'Copy failed'; }
+});
+
+// Generate an initial sample on load
+$('generateBtn').click();
+</script>
+</body>
+</html>

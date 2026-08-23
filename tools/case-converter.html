@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case Converter — Free Online Tool | nex9</title>
+<meta name="description" content="Convert text between UPPERCASE, lowercase, Title Case, Sentence case, camelCase, PascalCase, snake_case, kebab-case and CONSTANT_CASE instantly in your browser.">
+<link rel="canonical" href="https://nex9.de/tools/case-converter.html">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Case Converter","url":"https://nex9.de/tools/case-converter.html","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script src="/consent.js" defer></script>
+</head>
+<body>
+<header class="site">
+  <div class="bar">
+    <a class="brand" href="/"><span class="dot">▸</span> nex9<span style="color:var(--text-dim);font-weight:500">.de</span></a>
+    <nav class="top">
+      <a href="/#tools">Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/about.html">About</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/#tools">Tools</a> / Case Converter</div>
+  <h1>Case Converter</h1>
+  <p class="lede">Convert text between common casing styles — sentence casing, title casing, and programming identifier styles like camelCase and snake_case — in one click.</p>
+
+  <div class="card">
+    <label for="input">Input text</label>
+    <textarea id="input" rows="8" placeholder="Type or paste text to convert…"></textarea>
+
+    <div class="row">
+      <button id="btnUpper" class="secondary">UPPERCASE</button>
+      <button id="btnLower" class="secondary">lowercase</button>
+      <button id="btnTitle" class="secondary">Title Case</button>
+      <button id="btnSentence" class="secondary">Sentence case</button>
+      <button id="btnCamel" class="secondary">camelCase</button>
+      <button id="btnPascal" class="secondary">PascalCase</button>
+      <button id="btnSnake" class="secondary">snake_case</button>
+      <button id="btnKebab" class="secondary">kebab-case</button>
+      <button id="btnConstant" class="secondary">CONSTANT_CASE</button>
+    </div>
+
+    <div class="row">
+      <button id="copyBtn" class="secondary">Copy Output</button>
+      <span id="status"></span>
+    </div>
+
+    <label for="output">Output</label>
+    <div class="output-box" id="output">Output will appear here…</div>
+  </div>
+
+  <div class="ad-slot">Ad space</div>
+
+  <h2>How to use this case converter</h2>
+  <p>Type or paste text into the input box, then click any of the nine case buttons to convert it. UPPERCASE, lowercase, Title Case and Sentence case preserve your original spacing and punctuation, while camelCase, PascalCase, snake_case, kebab-case and CONSTANT_CASE first split the text into individual words — breaking on spaces, hyphens, underscores and existing camelCase boundaries — then rejoin them into a valid identifier.</p>
+
+  <h2>When each case style is used</h2>
+  <p>Title Case and Sentence case are common in headings and prose. camelCase and PascalCase are standard for variable and class names in JavaScript, Java and C#. snake_case is typical in Python and database column names, kebab-case is common in URLs and CSS class names, and CONSTANT_CASE is the usual convention for constants and environment variables across most languages.</p>
+
+  <div class="privacy-note"><strong>Privacy:</strong> This tool processes everything client-side in your browser using JavaScript. Your text is never sent to any server.</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="y"></span> nex9.de — free developer tools</span>
+    <span class="links"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></span>
+  </div>
+</footer>
+<script>
+document.getElementById('y').textContent = new Date().getFullYear();
+const $ = id => document.getElementById(id);
+const input = $('input'), output = $('output'), status = $('status');
+
+// Split text into words, breaking on whitespace, hyphens, underscores and camelCase boundaries.
+function tokenizeWords(str) {
+  return str
+    .trim()
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+    .replace(/[_\-]+/g, ' ')
+    .split(/\s+/)
+    .map(w => w.replace(/[^a-zA-Z0-9]/g, ''))
+    .filter(Boolean);
+}
+
+function toUpperCase(str) { return str.toUpperCase(); }
+function toLowerCase(str) { return str.toLowerCase(); }
+
+function toTitleCase(str) {
+  return str.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function toSentenceCase(str) {
+  const lower = str.toLowerCase();
+  return lower.replace(/(^\s*\w|[.!?]\s+\w)/g, c => c.toUpperCase());
+}
+
+function toCamelCase(str) {
+  const words = tokenizeWords(str);
+  return words
+    .map((w, i) => i === 0 ? w.toLowerCase() : w[0].toUpperCase() + w.slice(1).toLowerCase())
+    .join('');
+}
+
+function toPascalCase(str) {
+  return tokenizeWords(str)
+    .map(w => w[0].toUpperCase() + w.slice(1).toLowerCase())
+    .join('');
+}
+
+function toSnakeCase(str) {
+  return tokenizeWords(str).map(w => w.toLowerCase()).join('_');
+}
+
+function toKebabCase(str) {
+  return tokenizeWords(str).map(w => w.toLowerCase()).join('-');
+}
+
+function toConstantCase(str) {
+  return tokenizeWords(str).map(w => w.toUpperCase()).join('_');
+}
+
+function apply(fn) {
+  output.textContent = fn(input.value);
+  status.innerHTML = '<span class="badge ok">Converted</span>';
+}
+
+$('btnUpper').addEventListener('click', () => apply(toUpperCase));
+$('btnLower').addEventListener('click', () => apply(toLowerCase));
+$('btnTitle').addEventListener('click', () => apply(toTitleCase));
+$('btnSentence').addEventListener('click', () => apply(toSentenceCase));
+$('btnCamel').addEventListener('click', () => apply(toCamelCase));
+$('btnPascal').addEventListener('click', () => apply(toPascalCase));
+$('btnSnake').addEventListener('click', () => apply(toSnakeCase));
+$('btnKebab').addEventListener('click', () => apply(toKebabCase));
+$('btnConstant').addEventListener('click', () => apply(toConstantCase));
+
+$('copyBtn').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(output.textContent);
+    status.innerHTML = '<span class="badge ok">Copied</span>';
+  } catch (e) {
+    status.textContent = 'Copy failed';
+  }
+});
+</script>
+</body>
+</html>

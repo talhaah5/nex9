@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Markdown Previewer — Free Online Tool | nex9</title>
+<meta name="description" content="Preview Markdown as live-rendered HTML online for free. Supports headers, bold, italic, inline code, fenced code blocks, lists and links. Runs entirely in your browser.">
+<link rel="canonical" href="https://nex9.de/tools/markdown-previewer.html">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Markdown Previewer","url":"https://nex9.de/tools/markdown-previewer.html","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script src="/consent.js" defer></script>
+<style>
+.md-panes { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 720px) { .md-panes { grid-template-columns: 1fr; } }
+.md-panes textarea { min-height: 320px; height: 100%; }
+.md-preview {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  min-height: 320px;
+  overflow: auto;
+  font-size: .92rem;
+}
+.md-preview h1, .md-preview h2, .md-preview h3 { margin: 0 0 10px; }
+.md-preview p { margin: 0 0 12px; }
+.md-preview ul { margin: 0 0 12px; padding-left: 22px; }
+.md-preview pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 12px 14px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 0 0 12px;
+}
+.md-preview code {
+  font-family: var(--mono);
+  font-size: .85em;
+}
+.md-preview pre code { background: none; padding: 0; }
+.md-preview a { word-break: break-word; }
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="bar">
+    <a class="brand" href="/"><span class="dot">▸</span> nex9<span style="color:var(--text-dim);font-weight:500">.de</span></a>
+    <nav class="top">
+      <a href="/#tools">Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/about.html">About</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/#tools">Tools</a> / Markdown Previewer</div>
+  <h1>Markdown Previewer</h1>
+  <p class="lede">Type Markdown on the left and see it rendered live on the right. Supports a basic, common subset of Markdown syntax — not full CommonMark. Everything runs locally in your browser.</p>
+
+  <div class="card">
+    <div class="md-panes">
+      <div>
+        <label for="input">Markdown input</label>
+        <textarea id="input" rows="14" placeholder="# Hello&#10;&#10;This is **bold** and *italic* text with `inline code`.&#10;&#10;- item one&#10;- item two&#10;&#10;[nex9](https://nex9.de)"></textarea>
+      </div>
+      <div>
+        <label for="preview">Live preview</label>
+        <div class="md-preview" id="preview"></div>
+      </div>
+    </div>
+    <div class="row">
+      <span id="status" class="note">Supported: # ## ### headers, **bold**, *italic*, `code`, fenced ``` blocks, - / * lists, [text](url) links, paragraphs.</span>
+    </div>
+  </div>
+
+  <div class="ad-slot">Ad space</div>
+
+  <h2>How to use this Markdown previewer</h2>
+  <p>Type or paste Markdown into the left panel and the rendered HTML preview updates automatically on the right as you type. This tool intentionally supports only a <strong>basic, commonly used subset</strong> of Markdown — not the full CommonMark specification — so complex features like tables, nested blockquotes, footnotes, or reference-style links are not supported. What it does handle: <code># </code>/<code>## </code>/<code>### </code> headers, <code>**bold**</code>, <code>*italic*</code>, inline <code>`code`</code>, fenced <code>```</code> code blocks, <code>-</code>/<code>*</code> bullet lists, <code>[text](url)</code> links, and paragraphs separated by blank lines. It's ideal for quickly checking how a README snippet, comment, or commit message will render before pasting it somewhere else.</p>
+
+  <h2>Markdown and safe rendering</h2>
+  <p>Markdown is a lightweight markup language widely used for READMEs, documentation, comments, and chat formatting because it's readable as plain text and quick to write. A Markdown renderer that isn't careful can be a serious security risk: if raw HTML in the input (like a <code>&lt;script&gt;</code> tag) is passed straight into the page, it executes — a classic cross-site scripting vulnerability. This previewer escapes all HTML special characters in your input <em>before</em> applying any Markdown formatting rules, and only allows <code>http:</code>, <code>https:</code>, and <code>mailto:</code> links, so pasting hostile content is safe to preview.</p>
+
+  <div class="privacy-note"><strong>Privacy:</strong> This tool processes everything client-side in your browser using JavaScript. Your Markdown is never sent to any server.</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="y"></span> nex9.de — free developer tools</span>
+    <span class="links"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></span>
+  </div>
+</footer>
+<script>
+document.getElementById('y').textContent = new Date().getFullYear();
+const $ = id => document.getElementById(id);
+const input = $('input'), preview = $('preview');
+
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function safeLink(text, url) {
+  const trimmed = url.trim();
+  const allowed = /^(https?:|mailto:)/i.test(trimmed);
+  if (!allowed) return text;
+  const safeUrl = trimmed.replace(/"/g, '&quot;');
+  return '<a href="' + safeUrl + '" target="_blank" rel="noopener noreferrer">' + text + '</a>';
+}
+
+function renderInline(text) {
+  let out = text;
+  out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
+  out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  out = out.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (m, txt, url) => safeLink(txt, url));
+  return out;
+}
+
+function renderMarkdown(raw) {
+  const escaped = escapeHtml(raw);
+  const lines = escaped.split('\n');
+  const html = [];
+  let i = 0;
+  let paragraph = [];
+  let listItems = null;
+
+  function flushParagraph() {
+    if (paragraph.length) {
+      html.push('<p>' + renderInline(paragraph.join(' ')) + '</p>');
+      paragraph = [];
+    }
+  }
+  function flushList() {
+    if (listItems) {
+      html.push('<ul>' + listItems.map(li => '<li>' + renderInline(li) + '</li>').join('') + '</ul>');
+      listItems = null;
+    }
+  }
+
+  while (i < lines.length) {
+    const line = lines[i];
+
+    // fenced code block
+    if (/^```/.test(line.trim())) {
+      flushParagraph();
+      flushList();
+      const codeLines = [];
+      i++;
+      while (i < lines.length && !/^```/.test(lines[i].trim())) {
+        codeLines.push(lines[i]);
+        i++;
+      }
+      html.push('<pre><code>' + codeLines.join('\n') + '</code></pre>');
+      i++; // skip closing fence
+      continue;
+    }
+
+    const h3 = line.match(/^### (.*)$/);
+    const h2 = line.match(/^## (.*)$/);
+    const h1 = line.match(/^# (.*)$/);
+    if (h3 || h2 || h1) {
+      flushParagraph();
+      flushList();
+      if (h1) html.push('<h1>' + renderInline(h1[1]) + '</h1>');
+      else if (h2) html.push('<h2>' + renderInline(h2[1]) + '</h2>');
+      else html.push('<h3>' + renderInline(h3[1]) + '</h3>');
+      i++;
+      continue;
+    }
+
+    const listMatch = line.match(/^[-*] (.*)$/);
+    if (listMatch) {
+      flushParagraph();
+      if (!listItems) listItems = [];
+      listItems.push(listMatch[1]);
+      i++;
+      continue;
+    }
+    flushList();
+
+    if (line.trim() === '') {
+      flushParagraph();
+      i++;
+      continue;
+    }
+
+    paragraph.push(line.trim());
+    i++;
+  }
+  flushParagraph();
+  flushList();
+
+  return html.join('\n');
+}
+
+let timer = null;
+function update() {
+  preview.innerHTML = renderMarkdown(input.value);
+}
+input.addEventListener('input', () => {
+  clearTimeout(timer);
+  timer = setTimeout(update, 150);
+});
+
+input.value = '# Hello\n\nThis is **bold** and *italic* text with `inline code`.\n\n- item one\n- item two\n\n[nex9](https://nex9.de)';
+update();
+</script>
+</body>
+</html>

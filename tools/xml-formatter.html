@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>XML Formatter & Validator — Free Online Tool | nex9</title>
+<meta name="description" content="Format, validate and minify XML online for free. Instantly detect malformed XML and pretty-print with 2-space indentation. Runs entirely in your browser.">
+<link rel="canonical" href="https://nex9.de/tools/xml-formatter.html">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"XML Formatter & Validator","url":"https://nex9.de/tools/xml-formatter.html","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script src="/consent.js" defer></script>
+</head>
+<body>
+<header class="site">
+  <div class="bar">
+    <a class="brand" href="/"><span class="dot">▸</span> nex9<span style="color:var(--text-dim);font-weight:500">.de</span></a>
+    <nav class="top">
+      <a href="/#tools">Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/about.html">About</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/#tools">Tools</a> / XML Formatter</div>
+  <h1>XML Formatter & Validator</h1>
+  <p class="lede">Paste XML to instantly validate, pretty-print or minify it. Everything runs locally in your browser using the native DOM parser — nothing is uploaded or stored.</p>
+
+  <div class="card">
+    <label for="input">Input XML</label>
+    <textarea id="input" rows="10" placeholder="<root><item id=&quot;1&quot;>Hello</item></root>"></textarea>
+
+    <div class="row">
+      <button id="formatBtn">Format / Beautify</button>
+      <button id="minifyBtn" class="secondary">Minify</button>
+      <button id="copyBtn" class="secondary">Copy Output</button>
+      <button id="clearBtn" class="secondary">Clear</button>
+      <span id="status"></span>
+    </div>
+
+    <label for="output">Output</label>
+    <div class="output-box" id="output">Output will appear here…</div>
+  </div>
+
+  <div class="ad-slot">Ad space</div>
+
+  <h2>How to use this XML formatter</h2>
+  <p>Paste or type any XML document into the input box above, then click <strong>Format / Beautify</strong> to get a clean version indented 2 spaces per nesting level, or <strong>Minify</strong> to strip all whitespace between tags for compact storage or transmission. The tool validates your XML using the browser's built-in parser first — if it's malformed, you'll see exactly what the parser objected to instead of a formatted (but wrong) result.</p>
+
+  <h2>Why validate and format XML?</h2>
+  <p>XML is still widely used for configuration files, SOAP APIs, RSS/Atom feeds, SVG graphics, and data interchange between enterprise systems. Unlike JSON, XML has stricter well-formedness rules — every opening tag needs a matching closing tag (or a self-closing slash), attribute values must be quoted, and certain characters like <code>&amp;</code> and <code>&lt;</code> must be escaped inside text content. A single unclosed tag or unescaped ampersand will break parsing entirely. Pretty-printing also makes deeply nested XML far easier to read and debug than a single unbroken line, while minifying strips unnecessary whitespace before sending it over the wire.</p>
+
+  <div class="privacy-note"><strong>Privacy:</strong> This tool processes everything client-side in your browser using JavaScript. Your XML is never sent to any server.</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="y"></span> nex9.de — free developer tools</span>
+    <span class="links"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></span>
+  </div>
+</footer>
+<script>
+document.getElementById('y').textContent = new Date().getFullYear();
+const $ = id => document.getElementById(id);
+const input = $('input'), output = $('output'), status = $('status');
+const INDENT = '  ';
+
+function parseXml(text) {
+  const doc = new DOMParser().parseFromString(text, 'application/xml');
+  const errors = doc.getElementsByTagName('parsererror');
+  if (errors.length > 0) {
+    throw new Error(errors[0].textContent.trim());
+  }
+  return doc;
+}
+
+function printNode(node, depth) {
+  const pad = INDENT.repeat(depth);
+
+  if (node.nodeType === Node.TEXT_NODE) {
+    const text = node.nodeValue.trim();
+    return text ? text : '';
+  }
+
+  if (node.nodeType === Node.COMMENT_NODE) {
+    return pad + '<!--' + node.nodeValue + '-->';
+  }
+
+  if (node.nodeType !== Node.ELEMENT_NODE) return '';
+
+  let tag = '<' + node.tagName;
+  for (const attr of node.attributes) {
+    tag += ' ' + attr.name + '="' + attr.value + '"';
+  }
+
+  const children = Array.from(node.childNodes).filter(c =>
+    c.nodeType === Node.ELEMENT_NODE ||
+    c.nodeType === Node.COMMENT_NODE ||
+    (c.nodeType === Node.TEXT_NODE && c.nodeValue.trim() !== '')
+  );
+
+  if (children.length === 0) {
+    return pad + tag + '/>';
+  }
+
+  const onlyTextChild = children.length === 1 && children[0].nodeType === Node.TEXT_NODE;
+  if (onlyTextChild) {
+    return pad + tag + '>' + children[0].nodeValue.trim() + '</' + node.tagName + '>';
+  }
+
+  tag += '>';
+  const inner = children.map(c => printNode(c, depth + 1)).filter(Boolean).join('\n');
+  return pad + tag + '\n' + inner + '\n' + pad + '</' + node.tagName + '>';
+}
+
+function prettyPrint(doc) {
+  const lines = [];
+  if (doc.firstChild && doc.firstChild.nodeType === Node.PROCESSING_INSTRUCTION_NODE) {
+    lines.push('<?' + doc.firstChild.target + ' ' + doc.firstChild.data + '?>');
+  }
+  lines.push(printNode(doc.documentElement, 0));
+  return lines.join('\n');
+}
+
+function showError(e) {
+  output.textContent = 'Invalid XML: ' + e.message;
+  status.innerHTML = '<span class="badge err">Invalid</span>';
+}
+
+function showOk() {
+  status.innerHTML = '<span class="badge ok">Valid</span>';
+}
+
+$('formatBtn').addEventListener('click', () => {
+  try {
+    const doc = parseXml(input.value);
+    output.textContent = prettyPrint(doc);
+    showOk();
+  } catch (e) { showError(e); }
+});
+
+$('minifyBtn').addEventListener('click', () => {
+  try {
+    parseXml(input.value);
+    output.textContent = input.value.trim().replace(/>\s+</g, '><');
+    showOk();
+  } catch (e) { showError(e); }
+});
+
+$('copyBtn').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(output.textContent);
+    status.innerHTML = '<span class="badge ok">Copied</span>';
+  } catch (e) { status.textContent = 'Copy failed'; }
+});
+
+$('clearBtn').addEventListener('click', () => {
+  input.value = '';
+  output.textContent = 'Output will appear here…';
+  status.textContent = '';
+});
+</script>
+</body>
+</html>

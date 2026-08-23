@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>URL Encode / Decode — Free Online Tool | nex9</title>
+<meta name="description" content="Encode text into a URL-safe format or decode percent-encoded URLs back to plain text. Handles special characters and Unicode correctly, entirely in your browser.">
+<link rel="canonical" href="https://nex9.de/tools/url-encode-decode.html">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"URL Encode / Decode","url":"https://nex9.de/tools/url-encode-decode.html","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script src="/consent.js" defer></script>
+</head>
+<body>
+<header class="site">
+  <div class="bar">
+    <a class="brand" href="/"><span class="dot">▸</span> nex9<span style="color:var(--text-dim);font-weight:500">.de</span></a>
+    <nav class="top">
+      <a href="/#tools">Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/about.html">About</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/#tools">Tools</a> / URL Encode / Decode</div>
+  <h1>URL Encode / Decode</h1>
+  <p class="lede">Percent-encode text so it's safe to use inside a URL, or decode a percent-encoded string back to plain text. Runs entirely in your browser — nothing is uploaded.</p>
+
+  <div class="card">
+    <label for="input">Input</label>
+    <textarea id="input" rows="8" placeholder="Type or paste text or a URL-encoded string…"></textarea>
+
+    <div class="row">
+      <button id="encodeBtn">Encode</button>
+      <button id="decodeBtn">Decode</button>
+      <button id="copyBtn" class="secondary">Copy Output</button>
+      <button id="clearBtn" class="secondary">Clear</button>
+      <span id="status"></span>
+    </div>
+
+    <label for="output">Output</label>
+    <div class="output-box" id="output">Output will appear here…</div>
+  </div>
+
+  <div class="ad-slot">Ad space</div>
+
+  <h2>How to use this URL encoder</h2>
+  <p>Paste any text into the input box and click <strong>Encode</strong> to percent-encode reserved and non-ASCII characters using <code>encodeURIComponent</code>. To reverse the process, paste a percent-encoded string and click <strong>Decode</strong>. Malformed sequences (like a stray <code>%</code> not followed by two hex digits) are caught and reported instead of crashing the page.</p>
+
+  <h2>When you need URL encoding</h2>
+  <p>URLs can only safely contain a limited set of ASCII characters. Spaces, ampersands, question marks, slashes and non-Latin text must be percent-encoded before they're placed in a query string, path segment, or form submission — otherwise they can break the URL structure or be misinterpreted by servers. This is essential when building links that carry search terms, filenames, or user-generated content.</p>
+
+  <div class="privacy-note"><strong>Privacy:</strong> This tool processes everything client-side in your browser using JavaScript. Your text is never sent to any server.</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="y"></span> nex9.de — free developer tools</span>
+    <span class="links"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></span>
+  </div>
+</footer>
+<script>
+document.getElementById('y').textContent = new Date().getFullYear();
+const $ = id => document.getElementById(id);
+const input = $('input'), output = $('output'), status = $('status');
+
+function showOk(label) {
+  status.innerHTML = '<span class="badge ok">' + label + '</span>';
+}
+
+function showError(message) {
+  status.innerHTML = '<span class="badge err">' + message + '</span>';
+}
+
+$('encodeBtn').addEventListener('click', () => {
+  try {
+    output.textContent = encodeURIComponent(input.value);
+    showOk('Encoded');
+  } catch (e) {
+    showError('Encoding failed');
+  }
+});
+
+$('decodeBtn').addEventListener('click', () => {
+  try {
+    output.textContent = decodeURIComponent(input.value);
+    showOk('Decoded');
+  } catch (e) {
+    output.textContent = '';
+    showError('Invalid URL-encoded input');
+  }
+});
+
+$('copyBtn').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(output.textContent);
+    showOk('Copied');
+  } catch (e) {
+    status.textContent = 'Copy failed';
+  }
+});
+
+$('clearBtn').addEventListener('click', () => {
+  input.value = '';
+  output.textContent = 'Output will appear here…';
+  status.textContent = '';
+});
+</script>
+</body>
+</html>

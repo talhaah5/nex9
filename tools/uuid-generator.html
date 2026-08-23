@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UUID Generator — Free Online Tool | nex9</title>
+<meta name="description" content="Generate random UUID v4 identifiers online, one or many at a time. Uses the browser's native crypto.randomUUID for standards-compliant, collision-resistant IDs.">
+<link rel="canonical" href="https://nex9.de/tools/uuid-generator.html">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"UUID Generator","url":"https://nex9.de/tools/uuid-generator.html","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script src="/consent.js" defer></script>
+</head>
+<body>
+<header class="site">
+  <div class="bar">
+    <a class="brand" href="/"><span class="dot">▸</span> nex9<span style="color:var(--text-dim);font-weight:500">.de</span></a>
+    <nav class="top">
+      <a href="/#tools">Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/about.html">About</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/#tools">Tools</a> / UUID Generator</div>
+  <h1>UUID Generator</h1>
+  <p class="lede">Generate one or many random UUID v4 identifiers instantly. Uses the browser's native cryptographic random source — no server round-trip required.</p>
+
+  <div class="card">
+    <label for="count">How many UUIDs?</label>
+    <select id="count" style="width:auto;padding:6px 10px">
+      <option value="1" selected>1</option>
+      <option value="5">5</option>
+      <option value="10">10</option>
+      <option value="25">25</option>
+      <option value="50">50</option>
+    </select>
+
+    <div class="row">
+      <button id="generateBtn">Generate</button>
+      <button id="copyBtn" class="secondary">Copy All</button>
+      <span id="status"></span>
+    </div>
+
+    <label for="output">Generated UUIDs</label>
+    <div class="output-box" id="output">Click “Generate” to begin…</div>
+  </div>
+
+  <div class="ad-slot">Ad space</div>
+
+  <h2>How to use this UUID generator</h2>
+  <p>Choose how many UUIDs you need from the dropdown, then click <strong>Generate</strong>. Each one is printed on its own line in the output box. Click <strong>Copy All</strong> to copy the full list to your clipboard, ready to paste into code, a database seed script, or a spreadsheet.</p>
+
+  <h2>What is a UUID v4?</h2>
+  <p>A UUID (Universally Unique Identifier) is a 128-bit value formatted as 32 hexadecimal digits grouped into five sections, e.g. <code>3f2504e0-4f89-11d3-9a0c-0305e82c3301</code>. Version 4 UUIDs are generated from random bits rather than timestamps or hardware addresses, making collisions astronomically unlikely without any central coordination. They're widely used as database primary keys, resource identifiers in distributed systems, and idempotency keys for API requests — anywhere you need a unique ID that multiple independent systems can generate safely at the same time.</p>
+
+  <div class="privacy-note"><strong>Privacy:</strong> This tool processes everything client-side in your browser using JavaScript. Generated UUIDs are never sent to any server.</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="y"></span> nex9.de — free developer tools</span>
+    <span class="links"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></span>
+  </div>
+</footer>
+<script>
+document.getElementById('y').textContent = new Date().getFullYear();
+const $ = id => document.getElementById(id);
+const output = $('output'), status = $('status');
+
+$('generateBtn').addEventListener('click', () => {
+  const count = Number($('count').value);
+  const ids = Array.from({ length: count }, () => crypto.randomUUID());
+  output.textContent = ids.join('\n');
+  status.innerHTML = '<span class="badge ok">Generated ' + count + '</span>';
+});
+
+$('copyBtn').addEventListener('click', async () => {
+  if (!output.textContent || output.textContent.startsWith('Click ')) return;
+  try {
+    await navigator.clipboard.writeText(output.textContent);
+    status.innerHTML = '<span class="badge ok">Copied</span>';
+  } catch (e) {
+    status.textContent = 'Copy failed';
+  }
+});
+</script>
+</body>
+</html>

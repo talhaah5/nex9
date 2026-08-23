@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Base64 Encoding Explained (Without the Jargon) — nex9 Blog</title>
+<meta name="description" content="What base64 encoding actually does, why it exists, how it's different from encryption, and the most common mistake developers make with UTF-8 text.">
+<link rel="canonical" href="https://nex9.de/blog/base64-explained.html">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"Base64 Encoding Explained (Without the Jargon)","datePublished":"2026-08-23","author":{"@type":"Organization","name":"nex9"}}
+</script>
+<script src="/consent.js" defer></script>
+</head>
+<body>
+<header class="site">
+  <div class="bar">
+    <a class="brand" href="/"><span class="dot">▸</span> nex9<span style="color:var(--text-dim);font-weight:500">.de</span></a>
+    <nav class="top">
+      <a href="/#tools">Tools</a>
+      <a href="/blog/">Blog</a>
+      <a href="/about.html">About</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/blog/">Blog</a> / Base64</div>
+  <h1>Base64 Encoding Explained (Without the Jargon)</h1>
+  <p class="lede">Base64 shows up everywhere — email attachments, image data URIs, API tokens — but it's often misunderstood as a form of security. It isn't. Here's what it's actually for.</p>
+
+  <div class="ad-slot">Ad space</div>
+
+  <h2>The problem base64 solves</h2>
+  <p>A lot of systems — old email protocols, URLs, JSON, XML — were designed to safely carry plain text, not arbitrary binary data. If you try to stuff raw binary bytes (like an image file) into one of these text-only channels, you risk hitting bytes that the system misinterprets as control characters, breaking the whole message.</p>
+  <p>Base64 solves this by re-encoding any sequence of bytes into a string made up of only 64 safe characters: <code>A–Z</code>, <code>a–z</code>, <code>0–9</code>, plus <code>+</code> and <code>/</code> (and <code>=</code> for padding). Every 3 bytes of input become 4 characters of output, so the encoded result is roughly 33% larger than the original.</p>
+
+  <h2>Base64 is not encryption</h2>
+  <p>This is the single most common misconception. Base64 is a reversible <em>encoding</em>, not a cipher — anyone can decode it instantly with zero secret key required, including with this site's own <a href="/tools/base64-encode-decode.html">base64 tool</a>. If you see a password or API key "protected" by base64, it is not protected at all; it's just reformatted. Never treat base64 as a substitute for real encryption or hashing.</p>
+
+  <h2>Where you'll actually run into it</h2>
+  <ul>
+    <li><strong>Data URIs</strong> — embedding a small image directly inside CSS or HTML as <code>data:image/png;base64,...</code>.</li>
+    <li><strong>HTTP Basic Authentication</strong> — the <code>Authorization</code> header encodes <code>username:password</code> in base64 (again, not encrypted — this is why Basic Auth requires HTTPS).</li>
+    <li><strong>JWTs</strong> — the header and payload segments of a JSON Web Token are base64url-encoded JSON (see our <a href="/tools/jwt-decoder.html">JWT decoder</a>).</li>
+    <li><strong>Email attachments (MIME)</strong> — binary files are base64-encoded so they survive being routed through text-only mail servers.</li>
+  </ul>
+
+  <h2>The classic UTF-8 mistake</h2>
+  <p>Base64 operates on raw bytes, not characters. If you naively run a browser's built-in <code>btoa()</code> function on text containing non-ASCII characters (accented letters, emoji, CJK text), it will throw an error or silently corrupt the output, because <code>btoa</code> expects each character to fit in a single byte. The fix is to first convert the string to its proper UTF-8 byte representation before encoding, and reverse that step on decode. Our <a href="/tools/base64-encode-decode.html">base64 encoder/decoder</a> handles this correctly out of the box, so pasting emoji or non-English text won't break it.</p>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>© <span id="y"></span> nex9.de — free developer tools</span>
+    <span class="links"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></span>
+  </div>
+</footer>
+<script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+</body>
+</html>
