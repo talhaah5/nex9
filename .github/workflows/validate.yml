@@ -1,0 +1,86 @@
+name: Validate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: No external CDN / script dependencies in HTML
+        run: |
+          set -e
+          # Every <script src=...> and <link rel="stylesheet" href=...> must be a
+          # site-relative path (starts with "/"), never http(s):// — this is the
+          # site's core "zero external dependencies" guarantee, enforced by CI
+          # instead of just documented in AGENTS.md.
+          if grep -RnoE '<(script src|link[^>]+rel="stylesheet"[^>]+href)="https?://' --include='*.html' .; then
+            echo "::error::Found an external script/stylesheet reference. This site must be 100% self-contained."
+            exit 1
+          fi
+          echo "OK: no external CDN references found"
+
+      - name: Validate registry/data/*.yaml against schema
+        run: |
+          python3 - <<'PY'
+          import glob, sys, yaml
+
+          required = [
+              "name", "slug", "type", "summary", "description", "repo_url",
+              "install", "license", "maintainer", "tags", "added_by",
+              "added_date", "last_verified", "verified_by",
+          ]
+          errors = []
+          files = glob.glob("registry/data/*.yaml")
+          if not files:
+              print("No registry data files yet — skipping.")
+              sys.exit(0)
+
+          for f in files:
+              with open(f) as fh:
+                  entry = yaml.safe_load(fh)
+              if not isinstance(entry, dict):
+                  errors.append(f"{f}: not a YAML mapping")
+                  continue
+              for field in required:
+                  if field not in entry or entry[field] in (None, "", []):
+                      errors.append(f"{f}: missing required field '{field}'")
+              if entry.get("type") not in ("mcp-server", "skill"):
+                  errors.append(f"{f}: type must be 'mcp-server' or 'skill', got {entry.get('type')!r}")
+              expected_slug = f.split("/")[-1].removesuffix(".yaml")
+              if entry.get("slug") != expected_slug:
+                  errors.append(f"{f}: slug '{entry.get('slug')}' must match filename '{expected_slug}'")
+
+          if errors:
+              for e in errors:
+                  print(f"::error::{e}")
+              sys.exit(1)
+          print(f"OK: {len(files)} registry entries valid")
+          PY
+
+      - name: Registry page is up to date with registry data
+        run: |
+          if [ -f scripts/build-registry.py ]; then
+            cp foundry/registry.html /tmp/registry-before.html 2>/dev/null || true
+            python3 scripts/build-registry.py
+            if ! diff -q /tmp/registry-before.html foundry/registry.html > /dev/null 2>&1; then
+              echo "::error::foundry/registry.html is out of date — run 'python3 scripts/build-registry.py' and commit the result."
+              exit 1
+            fi
+            echo "OK: foundry/registry.html matches registry/data/"
+          else
+            echo "scripts/build-registry.py not present yet — skipping."
+          fi
