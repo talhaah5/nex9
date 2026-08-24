@@ -54,3 +54,25 @@ jobs:
                         done)"
           [ "$fail" -eq 0 ] && echo "OK: all internal links resolve"
           exit "$fail"
+
+  coordinator:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: coordinator
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install
+        run: pip install -e ".[dev]" pytest-cov
+
+      - name: Trust logic tests
+        # These cover manifest signing, the ingest schema boundary, and the
+        # global per-target rate ceiling. The ceiling in particular is what
+        # keeps the swarm from being usable as a DoS tool, so a red suite here
+        # blocks the merge rather than warning about it.
+        run: pytest --cov=vantage --cov-report=term-missing --cov-fail-under=80
