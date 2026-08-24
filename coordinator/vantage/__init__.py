@@ -6,12 +6,14 @@ measurement network rather than a botnet live in three modules:
 * `models`    — strict wire schemas; reject, never coerce
 * `signing`   — Ed25519 manifest signatures, so agents can verify what we asked
 * `ratelimit` — global per-target ceilings, so the swarm can never flood a host
+* `beacon`    — server-observed vantage points, so location is a fact not a claim
 """
 
 from __future__ import annotations
 
 __version__ = "0.1.0"
 
+from vantage.beacon import BeaconError, BeaconRegistry, NetworkResolver, VantagePoint
 from vantage.models import (
     AgentIdentity,
     DnsResult,
@@ -40,6 +42,8 @@ from vantage.signing import (
 __all__ = [
     "ALLOWED",
     "AgentIdentity",
+    "BeaconError",
+    "BeaconRegistry",
     "Decision",
     "Denial",
     "DnsResult",
@@ -49,6 +53,7 @@ __all__ = [
     "HttpTarget",
     "Kind",
     "Manifest",
+    "NetworkResolver",
     "Observation",
     "Policy",
     "RateLimiter",
@@ -57,6 +62,7 @@ __all__ = [
     "Target",
     "TlsResult",
     "TlsTarget",
+    "VantagePoint",
     "__version__",
     "canonical_bytes",
     "load_public_key_pem",
