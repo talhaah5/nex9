@@ -8,6 +8,7 @@ measurement network rather than a botnet live in three modules:
 * `ratelimit` — global per-target ceilings, so the swarm can never flood a host
 * `beacon`    — server-observed vantage points, so location is a fact not a claim
 * `resolver`  — the address-to-network lookup the beacon depends on
+* `storage`   — append-only persistence; the dataset is the asset
 """
 
 from __future__ import annotations
@@ -46,6 +47,7 @@ from vantage.signing import (
     sign_payload,
     verify_payload,
 )
+from vantage.storage import SqliteStore, StorageError, Store, StoredReport
 
 __all__ = [
     "ALLOWED",
@@ -70,7 +72,11 @@ __all__ = [
     "RateLimiter",
     "Report",
     "SignatureError",
+    "SqliteStore",
     "StaticResolver",
+    "StorageError",
+    "Store",
+    "StoredReport",
     "Target",
     "TlsResult",
     "TlsTarget",
