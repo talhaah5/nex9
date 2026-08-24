@@ -19,5 +19,14 @@ htmlcov/
 *.pem
 *.key
 
+# The database. This repo is public and the DB holds beacon_tokens.source_ip —
+# the only personal data in the system. Committing one would publish raw IP
+# addresses that the retention purge exists to remove. The -wal and -shm
+# sidecars carry the same rows, so they are excluded too.
+*.db
+*.db-wal
+*.db-shm
+*.sqlite3
+
 # macOS
 .DS_Store
