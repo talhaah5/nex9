@@ -2,13 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://nex9.de/</loc></url>
   <url><loc>https://nex9.de/about.html</loc></url>
+  <url><loc>https://nex9.de/tools/</loc></url>
   <url><loc>https://nex9.de/blog/</loc></url>
   <url><loc>https://nex9.de/blog/base64-explained.html</loc></url>
   <url><loc>https://nex9.de/blog/what-is-a-uuid.html</loc></url>
-  <url><loc>https://nex9.de/foundry/</loc></url>
-  <url><loc>https://nex9.de/foundry/registry.html</loc></url>
   <url><loc>https://nex9.de/privacy.html</loc></url>
   <url><loc>https://nex9.de/terms.html</loc></url>
+  <url><loc>https://nex9.de/tools/</loc></url>
   <url><loc>https://nex9.de/tools/base64-encode-decode.html</loc></url>
   <url><loc>https://nex9.de/tools/case-converter.html</loc></url>
   <url><loc>https://nex9.de/tools/color-converter.html</loc></url>
